@@ -1,4 +1,4 @@
-﻿{
+{
     "@platforms": ["android", "iPhone", "iPad"],
     "id": "H512C1150",/*应用的标识，创建应用时自动生成，勿手动修改*/
     "name": "CloudApp",/*应用名称，程序桌面图标名称*/
@@ -135,5 +135,42 @@
                 }
             }
         }
-    }
+    },
+	"dependencies": {
+		"pages": {
+			"index.html": {
+				"resources": [],
+				"refer": [
+					"content.html"
+				],
+				"priority": 0
+			},
+			"content.html": {
+				"resources": [],
+				"refer": [
+					"search.html",
+					"uploader.html"
+				],
+				"priority": 0
+			}
+		},
+		"idle": {
+			"resources": [
+				"lib/mui/css/mui.css",
+				"lib/vue/vue.min.js",
+				"img/cloud_icon.png",
+				"lib/iconfont/iconfont.css",
+				"lib/mui/css/mui.min.css",
+				"css/share.css",
+				"lib/mui/js/mui.js",
+				"img/icon.png",
+				"js/util.js",
+				"lib/mui/fonts/mui.ttf",
+				"lib/mui/js/mui.min.js",
+				"lib/vue/vue.js",
+				"img/storage.png",
+				"README.md"
+			]
+		}
+	}
 }

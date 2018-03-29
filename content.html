@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html>
+	
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<link rel="stylesheet" href="lib/mui/css/mui.min.css" />
+		<link rel="stylesheet" href="lib/iconfont/iconfont.css" />
+		<link rel="stylesheet" href="css/share.css"/>
+		<style>
+			/*网盘 用户信息栏*/
+			.user-info{
+				width: 100%;
+				height: 75px;
+				padding: 10px 10px 10px 15px;
+				background: url("img/infoback.png") no-repeat center center;
+			}
+			.user-info .user-content{
+				height: 55px;
+			}
+			.user-info .icon{
+				float: left;
+				height: 55px;
+				width: 55px;
+				border: 1px solid white;
+				border-radius: 35px;
+				background: url("img/infoicon.png") no-repeat center center;
+			}
+			.user-info .title{
+				float: left;
+				margin-left: 10px;
+				height: 55px;
+				line-height: 55px;
+				width: 100px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				color: white;
+				font-size: 22px;
+				font-weight: bold;
+			}
+			/*网盘页面上传按钮*/
+			.user-info .upload-fuc{
+				float: right;
+				padding: 10px 0px 10px;
+			}
+			.user-info .upload-fuc .upload-btn{
+				height: 30px;
+				width: 60px;
+				font-size: 16px;
+				color: rgba(0, 0, 0, 0.7);
+				font-weight: normal;
+				background-color: rgba(0, 0, 255, 0.2);
+				border: 1px solid rgba(0, 0, 255, 0.3);
+				border-radius: 2px;
+				line-height: 30px;
+				text-align: center;
+			}
+			.user-info .upload-fuc .upload-btn:hover{
+				background-color: rgba(0, 0, 0, 0.3);
+			}
+			/*网盘页面*/
+			.doc-tab{
+				margin: 0;
+				padding: 0;
+				list-style: none;
+				height: 36px;
+				background-color: dodgerblue;
+			}
+			.doc-tab .tab-item{
+				float: left;
+				width: 33.3%;
+				height: 100%;
+				text-align: center;
+				line-height: 36px;
+				color: white;
+				border-right: 1px solid rgba(0, 0, 0, 0.1);
+				font-size: 12px;
+			}
+			.doc-tab .tab-item:nth-child(3){
+				border-right: none;
+			}
+			.network-dist-scroll{
+				top: 111px;
+				left: 0;
+			}
+			.panlist-back{
+				height: 35px;
+				padding: 5px 15px;
+				background-color: rgba(0, 100, 0, 0.1);
+			}
+			/*传输列表页面*/
+			.mui-slider{
+				margin-top: 44px;
+			}
+			/*传输列表*/
+			/*.panlist-item .item-right{
+				float: right;
+				margin-right: 15px;
+				position: relative;
+				top: -45px;
+				width: 30px;
+				height: 30px;
+			}
+			.item-right .right-icon{
+				width: 30px; 
+				height: 30px; 
+				border: 1px solid transparent; 
+				border-radius: 15px;
+			}*/
+			/*回收站页面*/
+			.trash-clear{
+				float: right;
+				margin: 7px 0px;
+				height: 30px;
+				width: 60px;
+				line-height: 30px;
+				text-align: center;
+				font-size: 14px;
+				border: 1px solid transparent;
+				border-radius: 5px;
+				background-color: blue;
+				color: white;
+				font-weight: 900;
+			}
+			.trash-header{
+				margin-top: 44px;
+				height: 30px;
+				color: rgba(0, 0, 0, 0.6);
+				font-size: 14px;
+				line-height: 30px;
+				margin-left: 8px;
+			}
+			.trash-dist-scroll{
+				top: 30px;
+				left: 0;
+			}
+			/*更多页面 用户信息*/
+			.user-info .icon-info-list{
+				float: left;
+				margin-left: 15px;
+				margin-top: 2px;
+				height: 55px;
+			}
+			.user-info .information{
+				padding: 0px;
+				margin: 0px;
+				width: 195px;
+				height: 100%;
+				list-style: none;
+			}
+			.user-info .information .li-title{
+				height: 25px;
+				line-height: 25px;
+				font-size: 20px;
+				color: white;
+				font-weight: normal;
+			}
+			.user-info .information .li-percent{
+				padding: 3px 0px;
+			}
+			.user-info .information .li-percent .mui-progressbar{
+				height: 5px;
+			}
+			.user-info .information .li-info{
+				height: 20px;
+				font-size: 12px;
+				color: antiquewhite;
+			}
+			/*更多页面*/
+			.more-content{
+				margin-top: 10px;
+			}
+			.more-content .more-fuc-group{
+				margin-top: 20px;
+			}
+			.more-content .more-fuc-item{
+				height: 40px;
+				line-height: 40px;
+				text-align: center;
+				width: 100%;
+				background-color: white;
+				margin-top: 10px;
+			}
+			.more-content .exit-fuc{
+				color: red;
+			}
+			.more-content .more-fuc-item:hover{
+				background-color: rgba(0, 0, 255, 0.05);
+			}
+			.span-content{
+				color: gray;
+				font-size: 14px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="app" class="mui-content bodycontent">
+			<div id="network-dist" class="mui-control-content mui-active">
+				<header class="user-info">
+					<div class="user-content">
+						<div class="icon"></div>
+						<div class="title">
+							{{userInfo.name}}
+						</div>
+						<div class="upload-fuc">
+							<div id="uploadBtn" class="upload-btn">
+								上传
+							</div>
+						</div>
+					</div>
+				</header>
+		
+				<ul class="doc-tab">
+					<li id="panSortBtn" class="tab-item sort">
+						<i class="mui-icon iconfont icon-icon8"></i>
+						排序	
+					</li>
+					<li id="panAddBtn" class="tab-item add">
+						<i class="mui-icon iconfont icon-addfile"></i>
+						添加
+					</li>
+					<li id="panSearchBtn" class="tab-item search">
+						<i class="mui-icon mui-icon-search"></i>
+						查找
+					</li>
+				</ul>
+				
+				<div id="pullrefresh" class="mui-scroll-wrapper network-dist-scroll">
+					<div class="mui-scroll">
+						<div id="panBackBtn" class="panlist-back">
+							<span class="mui-icon mui-icon-undo comment-head-photo"></span>
+							<span class="dark-medium" style="line-height: 30px; margin-left: 5px;">{{"当前菜单：./" + panBasePath}}</span>
+						</div>
+						<ul class="mui-table-view mui-table-view-chevron">
+							<li class="panlist-item" v-for="item, key in panList" :key="key" @click="panListItem(item)">
+								<!--文件夹图标显示-->
+								<img v-show="item.category" src="img/package.png" class="comment-head-photo mui-pull-left mt7" />
+								<!--文件图标-->
+								<img v-show="!item.category" src="img/file.png" class="comment-head-photo mui-pull-left mt7" />
+								<p class="dark-medium">{{item.fileName}}</p>
+								<p class="gray-medium">{{item.createTime}}</p>
+							</li>
+							<!--<li class="mui-table-view-cell">
+								<div id="panGetMore" class="pan-get-more">获取更多...</div>
+							</li>-->
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div id="transfor-list"	class="mui-control-content">
+				<header class="mui-bar mui-bar-nav">
+				    <h1 class="mui-title">传输列表</h1>
+				</header>
+				<div id="transfor" class="mui-slider">
+					<div id="transforSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+						<a class="mui-control-item mui-active" href="#uploadTransfor">
+							上传文件
+						</a>
+						<a class="mui-control-item" href="#downloadTransfor">
+							下载文件
+						</a>
+					</div>
+					<div id="transforProgressBar" class="mui-slider-progress-bar mui-col-xs-6"></div>
+					<div class="mui-slider-group">
+						<div id="uploadTransfor" class="mui-slider-item mui-control-content">
+							<div id="uploadScroll" class="mui-scroll-wrapper transfor-scroll">
+								<div class="mui-scroll">
+									<ul class="mui-table-view mui-table-view-chevron">
+										<li class="panlist-item" v-for="item, key in transUpList" :key="key" @click="transUpListItem(item)">
+											<!--文件夹图标显示-->
+											<img v-show="item.category" src="img/package.png" class="comment-head-photo mui-pull-left mt7" />
+											<!--文件图标-->
+											<img v-show="!item.category" src="img/file.png" class="comment-head-photo mui-pull-left mt7" />
+											<p class="dark-medium">{{item.fileName}}</p>
+											<p class="gray-medium">{{item.createTime}}</p>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div id="downloadTransfor" class="mui-slider-item mui-control-content mui-active">
+							<div id="downloadScroll" class="mui-scroll-wrapper transfor-scroll">
+								<div class="mui-scroll">
+									<ul class="mui-table-view mui-table-view-chevron">
+										<li class="panlist-item" v-for="item, key in transDownList" :key="key" @click="transDownListItem(item)">
+											<!--文件夹图标显示-->
+											<img v-show="item.category" src="img/package.png" class="comment-head-photo mui-pull-left mt7"/>
+											<!--文件图标-->
+											<img v-show="!item.category" src="img/file.png" class="comment-head-photo mui-pull-left mt7"/>
+											<p class="dark-medium">{{item.filename}}</p>
+											<p class="gray-medium">{{item.downloadedSize + "/" + item.totalSize + " KB"}}</p>
+											<!--<div class="item-right">
+												<img v-show="!item.flag" src="img/play.png" class="right-icon" @click="playDownItem(item)"/>
+												<img v-show="item.flag" src="img/pause.png" class="right-icon" @click="pauseDownItem(item)"/>
+											</div>-->
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="trash-station"	class="mui-control-content">
+				<header class="mui-bar mui-bar-nav">
+				    <div id="clearTrashBtn" class="mui-pull-right trash-clear">清空</div>
+				    <h1 class="mui-title">回收站</h1>
+				</header>
+				
+				<div class="trash-header">
+					回收站文件10天后自动清除
+				</div>
+				
+				<div id="pullrefresh" class="mui-scroll-wrapper trash-dist-scroll">
+					<div class="mui-scroll">
+						<ul class="mui-table-view mui-table-view-chevron">
+							<li class="panlist-item" v-for="item, key in trashList" :key="key">
+								<!--文件夹图标显示-->
+								<img v-show="item.category" src="img/package.png" class="comment-head-photo mui-pull-left mt7" />
+								<!--文件图标-->
+								<img v-show="!item.category" src="img/file.png" class="comment-head-photo mui-pull-left mt7" />
+								<p class="dark-medium">{{item.fileName}}</p>
+								<p class="gray-medium">删除时间：{{item.delDate}}</p>
+							</li> 
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div id="more-setting"	class="mui-control-content">
+				<header class="user-info">
+					<div class="user-content">
+						<div class="icon"></div>
+						<div class="icon-info-list">
+							<ul class="information">
+								<li class="li-title">
+									{{userInfo.name}}
+								</li>
+								<li class="li-percent">
+									<div id="progressbar" class="mui-progressbar">
+										<span></span>
+									</div>
+								</li>
+								<li class="li-info">
+									容量 ： {{userInfo.storageUsed + "MB/" + userInfo.storageSize + "MB"}}
+								</li>
+							</ul>
+						</div>
+					</div>
+				</header>
+				
+				<div class="more-content">
+					<ul class="mui-table-view mui-table-view-chevron">
+						<li class="mui-table-view-cell">
+							<span>账号</span>
+							<div class="span-content mui-pull-right">{{userInfo.phone}}</div>
+						</li>
+						<li id="nickNameBtn" class="mui-table-view-cell">
+							<span>昵称</span>
+							<div class="span-content mui-pull-right">{{userInfo.nickName == "" ? "null" : userInfo.nickName}}</div>
+							<div class="mui-navigate-right"></div>
+						</li>
+						<li id="emailBtn" class="mui-table-view-cell">
+							<span>邮箱</span>
+							<div class="span-content mui-pull-right">{{userInfo.email == "" ? "null" : userInfo.email}}</div>
+							<div class="mui-navigate-right"></div>
+						</li>
+						<li id="storageSizeBtn" class="mui-table-view-cell">
+							<span>容量</span>
+							<div class="span-content mui-pull-right">{{userInfo.storageSize}}<small> MB</small></div>
+							<div class="mui-navigate-right"></div>
+						</li>
+					</ul>
+					
+					
+					<div class="more-fuc-group">
+						<div id="userMessBtn" class="message-fuc more-fuc-item">
+							<div href="">信息反馈</div>
+						</div>
+						<div id="userLogoutBtn" class="logout-fuc more-fuc-item">
+							<div href="">注销账号</div>
+						</div>
+						<div id="userExitBtn" class="exit-fuc more-fuc-item">
+							<div href="">退出登录</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		
+			<div class="pan-fuc-list fuc-list" display="no">
+				<ul>
+					<li v-show="now_panItem.category" id="panFileOpenBtn">打开</li>
+					<li v-show="!now_panItem.category" id="panFileDownloadBtn">下载</li>
+					<li id="panFileRenameBtn">重命名</li>
+					<li id="panFileDeleteBtn">删除</li>
+					<li id="panFileMoveBtn">移动</li>
+					<li id="panFileCopyBtn">复制</li>
+					<li id="panFileCancelBtn">取消</li>
+				</ul>
+			</div>
+			
+			<div class="inc-fuc-list fuc-list" display="no">
+				<ul class="sort-fuc-list">
+					<li id="incNameBtn">按文件名称排序</li>
+					<li id="incTimeBtn">按时间倒序排序</li>
+					<li id="incCancelBtn">取消</li>
+				</ul>
+			</div>
+			
+			<!--<div class="transup-fuc-list fuc-list" display="no">
+				<ul>
+				</ul>
+			</div>-->
+			
+			<div class="transdown-fuc-list fuc-list" display="no">
+				<ul class="down-fuc-list">
+					<li v-show="!app.now_transDownItem.flag" id="downStartBtn">重新开始</li>
+					<li v-show="app.now_transDownItem.flag" id="downPauseBtn">暂停</li>
+					<li id="downCancelBtn">取消</li>
+				</ul>
+			</div>
+		</div>
+		
+		<nav class="mui-bar mui-bar-tab">
+			<a class="mui-tab-item mui-active" href="#network-dist">
+				<span class="mui-icon iconfont icon-yun"></span>
+				<span class="mui-tab-label">网盘</span>
+			</a>
+			<a class="mui-tab-item" href="#transfor-list">
+				<span class="mui-icon iconfont icon-icon-test"></span>
+				<span class="mui-tab-label">传输列表</span>
+			</a>
+			<a class="mui-tab-item" href="#trash-station">
+				<span class="mui-icon mui-icon-trash"></span>
+				<span class="mui-tab-label">回收站</span>
+			</a>
+			<a class="mui-tab-item" href="#more-setting">
+				<span class="mui-icon mui-icon-person"></span>
+				<span class="mui-tab-label">我的</span>
+			</a>
+		</nav>
+		
+		<script type="text/javascript" src="lib/mui/js/mui.min.js"></script>
+		<script type="text/javascript" src="lib/vue/vue.min.js"></script>
+		<script type="text/javascript" src="js/util.js" ></script>
+		<script type="text/javascript">
+			mui.init({
+				keyEventBind: {
+					backbutton: false  //关闭back按键监听
+				}
+			});
+			
+			//vue
+			var app = new Vue({
+				el:"#app",
+				data:{
+					userInfo: '',
+					panList: [],
+					panBasePath: '',
+					transUpList: [],
+					transDownList: [],
+					trashList: [],
+					now_panItem: {},
+					now_transItem: {},
+					now_transDownItem: {},
+					now_trashItem: {}
+				},
+				methods: {
+					panListItem: function(item){
+						this.now_panItem = item;
+						console.log(this.now_panItem.fileName);
+						mui('.pan-fuc-list')[0].setAttribute('display', '');
+					},
+					transUpListItem: function(item){
+						this.now_transItem = item;
+						console.log(this.now_transItem.fileName);
+						mui('.transup-fuc-list')[0].setAttribute('display', '');
+					},
+					transDownListItem: function(item){
+						this.now_transDownItem = item;
+						console.log(this.now_transDownItem.fileName);
+						mui('.transdown-fuc-list')[0].setAttribute('display', '');
+					}
+//					playDownItem: function(item){
+//						console.log(item.filename + ' 任务继续下载');
+//  					item.resume();
+//  					item.flag = true;
+//  					app.$set('transDownList', app.transDownList);
+//					},
+//					pauseDownItem: function(item){
+//						console.log(item.filename + ' 任务暂停');
+//  					item.pause();
+//  					item.flag = false;
+//  					app.$set('transDownList', app.transDownList);
+//					}
+				}
+			});
+			
+			//获取登录用户信息
+			app.userInfo = JSON.parse(localStorage.getItem('userinfo'));
+			var token = localStorage.getItem('token');
+			
+			//获取文件列表
+			var getPanList = function(fuc, path){
+				util.ajax(fuc, {
+			  			path: path
+			   		},
+			   		'post',
+				   	function(data){
+				   		if(data.code == 200){
+				   			//获取成功
+				   			console.log('文件列表获取成功')
+//				   			app.$set(app,'panList',data.data);
+				   			app.panList = data.data;
+				   			app.panBasePath = path;
+				   		} 
+				   		else{
+				   			//获取失败
+				   			console.log(data.message);
+					   	}
+				   	},
+				   	function(){
+				   		console.log('系统错误，请稍后重新尝试');
+				   	},
+				   	true
+				);
+			};
+			
+			var panListSort = function(type){
+				if(type == 'time'){
+					app.panList.sort(function(a, b){
+						var at = Date.parse(a.createTime);
+						var bt = Date.parse(b.createTime);
+						return at - bt;
+					});
+				}
+				else if(type == 'name'){
+					app.panList.sort(function(a, b){
+						if(a.fileName < b.fileName){
+							return -1;
+						}
+						else if(a.fileName == b.fileName){
+							return 0;
+						}
+						else{
+							return 1;
+						}
+					});
+				}
+			}
+			
+			var getTrashList = function(){
+				//未使用分页方式
+				util.ajax('fileDelRecs', {
+			  			pageNum: 1,
+			  			pageSize: 999,  //使用999测试
+			  			userId: app.userInfo.userId
+			   		},
+			   		'get',
+				   	function(data){
+				   		console.log(data.code);
+				   		if(data.code == 200){
+				   			//获取成功
+				   			console.log('回收站文件列表获取成功')
+				   			app.trashList = data.data.rows;
+				   		} 
+				   		else{
+				   			//获取失败
+				   			console.log(data.message);
+//				   			mui.toast(data.message);
+					   	}
+				   	},
+				   	function(){
+				   		console.log('系统错误，请稍后重新尝试');
+//				   		mui.toast('系统错误，请稍后重新尝试');
+				   	},
+				   	true
+				);
+			};
+			
+			var cancelBtn = function(cl){
+//				mui(cl)[0].setAttribute('display', 'no');
+				mui.later(function(){
+					mui(cl)[0].setAttribute('display', 'no');
+				}, 20);
+			};
+			
+			var listDeleteOne = function(oldlist, obj){
+				var newlist = [];
+				oldlist.forEach(function(item, index){
+					if(item.fullPath != obj.fullPath){
+						newlist.push(item);
+					}
+				});
+				return newlist;
+			};
+			
+			mui.plusReady(function() {
+				//获取页面高度，为动态设置滚动条高度
+				var height = plus.display.resolutionHeight;
+				console.log(height);
+				//各页面页面滚动条
+				mui('.network-dist-scroll')[0].style.height = height - 210 + 'px';
+				mui('.network-dist-scroll').scroll({
+					scrollY: true, //是否竖向滚动
+					scrollX: false, //是否横向滚动
+					indicators: true, //是否显示滚动条
+					deceleration:0.0006, //阻尼系数,系数越小滑动越灵敏
+					bounce: true //是否启用回弹
+				});
+				mui('.mui-slider-group')[0].style.height = height - 134 + 'px';
+				mui('.transfor-scroll').scroll({
+					scrollY: true, //是否竖向滚动
+					scrollX: false, //是否横向滚动
+					indicators: true, //是否显示滚动条
+					deceleration:0.0006, //阻尼系数,系数越小滑动越灵敏
+					bounce: true //是否启用回弹
+				});
+				mui('.trash-dist-scroll')[0].style.height = height - 124 + 'px'; 
+				mui('.trash-dist-scroll').scroll({
+					scrollY: true, //是否竖向滚动
+					scrollX: false, //是否横向滚动
+					indicators: true, //是否显示滚动条
+					deceleration:0.0006, //阻尼系数,系数越小滑动越灵敏
+					bounce: true //是否启用回弹
+				});
+				
+				//测试数据赋值
+				app.panList = app.transUpList = [
+			        {
+			            fullPath: "/input/APIAccess.log.2016-09-05.241",
+			            fileName: "APIAccess.log.2016-09-05.241",
+			            createTime: "2018-01-29 05:59",
+			            category: false,
+			            fileSize: 9,
+			            formatSize: "9.00",
+			            unit: "B"
+			        },
+			        {
+			            fullPath: "/input/APIAccess.log.2016-09-05.241",
+			            fileName: "AM.log.2016-09-05.241",
+			            createTime: "2018-01-28 05:59",
+			            category: true,
+			            fileSize: 9,
+			            formatSize: "9.00",
+			            unit: "B"
+			        },
+			        {
+			            fullPath: "/input/APIAccess.log.2016-09-05.241",
+			            fileName: "BPIAccess.log.2016-09-05.241",
+			            createTime: "2018-01-29 07:59",
+			            category: false,
+			            fileSize: 9,
+			            formatSize: "9.00",
+			            unit: "B"
+			        },
+			        {
+			            fullPath: "/input/APIAccess.log.2016-09-05.241",
+			            fileName: "长.log.2016-09-05.241",
+			            createTime: "2018-01-28 06:59",
+			            category: true,
+			            fileSize: 9,
+			            formatSize: "9.00",
+			            unit: "B"
+			        }
+			    ];
+			    app.trashList = [
+		            {
+		                delId: 1,
+		                userId: 1,
+		                fileName: "aaa.jpg",
+		                savePath: "/1/aaa.jpg",
+		                delDate: "2018-02-01 15:18:33"
+		            }
+		        ];
+				
+				//网盘页面
+				//获取网盘列表
+				getPanList('files/listFiles', '/' + app.userInfo.userId.toString());
+				//获取回收站文件列表
+				getTrashList();
+				//各按钮操作
+				mui('#uploadBtn')[0].addEventListener('tap', function(){
+					console.log('上传');
+			 		mui.openWindow({
+			 			url: 'uploader.html',
+			 			id: 'uploader'
+			 		});
+				});
+				//文件排序操作
+				mui('#panSortBtn')[0].addEventListener('tap', function(){
+					console.log('排序');
+					mui('.inc-fuc-list')[0].setAttribute('display', '');
+				});
+				mui('#incNameBtn')[0].addEventListener('tap', function(){
+					console.log('名称排序');
+					panListSort('name');
+					cancelBtn('.inc-fuc-list');
+				});
+				mui('#incTimeBtn')[0].addEventListener('tap', function(){
+					console.log('时间排序');
+					panListSort('time');
+					cancelBtn('.inc-fuc-list');
+				});
+				mui('#incCancelBtn')[0].addEventListener('tap', function(){
+					console.log('排序取消');
+					cancelBtn('.inc-fuc-list');
+				});
+				//添加文件操作
+				mui('#panAddBtn')[0].addEventListener('tap', function(){
+					console.log('添加');
+					var btnArray = ['取消', '确定'];
+					mui.prompt('请输入文件夹名称：', '文件夹名称', '添加文件夹', btnArray, function(e) {
+						if (e.index == 1) {
+							console.log(e.value);
+							var val = e.value;
+							if(val == ''){
+								mui.toast('添加失败，不可为空');
+								return;
+							}
+							else{
+								var newPath = app.panBasePath.split('/');
+								newPath.push(val);
+								newPath = newPath.join('/');
+								util.ajax('files/makeDir', {
+						  			path: newPath
+						   		},
+						   		'post',
+							   	function(data){
+							   		if(data.code == 200){
+							   			//添加成功
+							   			getPanList('files/listFiles', app.panBasePath);
+							   			mui.toast('文件夹添加成功');
+							   		} 
+							   		else{
+							   			//添加失败
+							   			mui.toast(data.message);
+								   	}
+							   	},
+							   	function(){
+							   		mui.toast('系统错误，请稍后重新尝试');
+							   	},
+							   	true
+							);
+							}
+						} else {
+							console.log('你点了取消按钮');
+						}
+					});
+				});
+				//查询文件操作
+				mui('#panSearchBtn')[0].addEventListener('tap', function(){
+					console.log('跳转查询页面');
+			 		mui.openWindow({
+			 			url: 'search.html',
+			 			id: 'search'
+			 		});
+				});
+				//返回上一菜单
+				mui('#panBackBtn')[0].addEventListener('tap', function(){
+					console.log('返回上一菜单');
+					var newPath = app.panBasePath.split('/');
+					if(newPath.length == 2 && newPath[1] == app.userInfo.userId){
+						mui.toast('当前为根目录，无上一级菜单');
+						return;
+					}
+					newPath.pop();
+					getPanList('files/listFiles', newPath.join('/'));
+				});
+				//单文件操作
+				mui('#panFileOpenBtn')[0].addEventListener('tap', function(){
+					console.log('单文件打开操作');
+					if(app.now_panItem.category){
+						console.log('为文件夹');
+						getPanList('files/listFiles', app.now_panItem.fullPath);
+					}
+					else{
+						console.log('为文件');
+						mui.toast('此为单个文件');
+					}
+					app.now_panItem = null;
+					cancelBtn('.pan-fuc-list');
+				});
+				mui('#panFileRenameBtn')[0].addEventListener('tap', function(){
+					console.log('单文件重命名操作');
+					var btnArray = ['取消', '确定'];
+					mui.prompt('请输入新文件名称：', app.now_panItem.fileName, '文件重命名', btnArray, function(e) {
+						if (e.index == 1) {
+							console.log(e.value);
+							var val = e.value;
+							if(val == ''){
+								mui.toast('修改失败，不可修改为空');
+								return;
+							}
+							else{
+								var newPath = app.panBasePath.split('/');
+								newPath.push(val);
+								newPath =  newPath.join('/');
+								util.ajax('files/renameFile', {
+						  			oldName: app.now_panItem.fullPath,
+						  			newName: newPath
+						   		},
+						   		'post',
+							   	function(data){
+							   		if(data.code == 200){
+							   			//修改成功
+							   			getPanList('files/listFiles', app.panBasePath);
+							   			mui.toast('重命名成功');
+							   			app.now_panItem = null;
+							   		} 
+							   		else{
+							   			//修改失败
+							   			mui.toast(data.message);
+								   	}
+							   	},
+							   	function(){
+							   		mui.toast('系统错误，请稍后重新尝试');
+							   	},
+							   	true
+							);
+							}
+						} else {
+							console.log('你点了取消按钮');
+						}
+					});
+					cancelBtn('.pan-fuc-list');
+				});
+				mui('#panFileDeleteBtn')[0].addEventListener('tap', function(){
+					console.log('单文件删除操作');
+					util.ajax('files/deleteDir', {
+				  			path: app.now_panItem.fullPath,
+				  			id: app.userInfo.userId
+				   		},
+				   		'post',
+					   	function(data){
+					   		if(data.code == 200){
+					   			//删除成功
+					   			mui.toast('删除成功');
+					   			//更新回收站文件列表
+								getTrashList();
+					   			app.panList = listDeleteOne(app.panList, app.now_panItem);
+								app.now_panItem = null;
+					   		} 
+					   		else{
+					   			//删除失败
+					   			mui.toast(data.message);
+								app.now_panItem = null;
+						   	}
+					   	},
+					   	function(){
+					   		mui.toast('系统错误，请稍后重新尝试');
+							app.now_panItem = null;
+					   	},
+					   	true
+					);
+					cancelBtn('.pan-fuc-list');
+				});
+				mui('#panFileDownloadBtn')[0].addEventListener('tap', function(){
+					console.log('单文件下载操作');
+					var task = util.fileDown(app.now_panItem.fullPath);
+					if(task){
+						task.start();
+						app.transDownList.push(task);
+					}
+					cancelBtn('.pan-fuc-list');
+				});
+				mui('#panFileMoveBtn')[0].addEventListener('tap', function(){
+					console.log('单文件移动操作');
+					var btnArray = ['取消', '确定'];
+					mui.prompt('请输入文件新路径：', app.now_panItem.fileName, '文件移动', btnArray, function(e) {
+						if (e.index == 1) {
+							console.log(e.value);
+							var val = app.userInfo.userId + '/' + e.value;
+							if(val == ''){
+								mui.toast('移动失败，不可为空');
+								return;
+							}
+							else{
+								util.ajax('files/moveFile', {
+						  			src: app.now_panItem.fullPath,
+						  			des: val
+						   		},
+						   		'post',
+							   	function(data){
+							   		if(data.code == 200){
+							   			//移动成功
+							   			mui.toast('移动成功');
+							   		} 
+							   		else{
+							   			//移动失败
+							   			mui.toast(data.message);
+								   	}
+							   	},
+							   	function(){
+							   		mui.toast('系统错误，请稍后重新尝试');
+							   	},
+							   	true
+							);
+							}
+						} else {
+							console.log('你点了取消按钮');
+						}
+					});
+					cancelBtn('.pan-fuc-list');
+				});
+				mui('#panFileCopyBtn')[0].addEventListener('tap', function(){
+					console.log('单文件复制操作');
+					var btnArray = ['取消', '确定'];
+					mui.prompt('请输入复制后文件存储的路径：', app.now_panItem.fileName, '文件复制', btnArray, function(e) {
+						if (e.index == 1) {
+							console.log(e.value);
+							var val = app.userInfo.userId + '/' + e.value;
+							if(val == ''){
+								mui.toast('复制失败，不可为空');
+								return;
+							}
+							else{
+								util.ajax('files/copyFile', {
+						  			src: app.now_panItem.fullPath,
+						  			des: val
+						   		},
+						   		'post',
+							   	function(data){
+							   		if(data.code == 200){
+							   			//复制成功
+							   			mui.toast('复制成功');
+							   		} 
+							   		else{
+							   			//复制失败
+							   			mui.toast(data.message);
+								   	}
+							   	},
+							   	function(){
+							   		mui.toast('系统错误，请稍后重新尝试');
+							   	},
+							   	true
+							);
+							}
+						} else {
+							console.log('你点了取消按钮');
+						}
+					});
+					cancelBtn('.pan-fuc-list');
+				});
+				mui('#panFileCancelBtn')[0].addEventListener('tap', function(){
+					console.log('单文件操作取消');
+					cancelBtn('.pan-fuc-list');
+				});
+				
+//				mui('#panGetMore')[0].addEventListener('tap', function(){
+//					mui.toast('获取更多');
+//					app.panList.push('+');
+//				});
+				//传输列表页面
+				//文件排序操作
+				mui('#downStartBtn')[0].addEventListener('tap', function(){
+					console.log(app.now_transDownItem.filename + ' 任务继续下载');
+    				app.now_transDownItem.resume();
+    				app.now_transDownItem.flag = true;
+//  				app.$set('transDownList', app.transDownList);
+					cancelBtn('.transdown-fuc-list');
+					app.now_transDownItem = {};
+				});
+				mui('#downPauseBtn')[0].addEventListener('tap', function(){
+					console.log(app.now_transDownItem.filename + ' 任务暂停');
+    				app.now_transDownItem.pause();
+    				app.now_transDownItem.flag = false;
+//  				app.$set('transDownList', app.transDownList);
+					cancelBtn('.transdown-fuc-list');
+					app.now_transDownItem = {};
+				});
+				mui('#downCancelBtn')[0].addEventListener('tap', function(){
+					cancelBtn('.transdown-fuc-list');
+					console.log('取消');
+					app.now_transDownItem = {};
+				});
+				//回收站页面
+				mui('#clearTrashBtn')[0].addEventListener('tap', function(){
+					console.log('清空回收站操作');
+					var btnArray = ['取消', '确定'];
+					mui.confirm('确认清空', null, btnArray, function(e) {
+						if (e.index == 1) {
+							console.log('你点了取消按钮');								
+						} else {
+							util.ajax('users/delete', {
+									userId: app.userInfo.userId
+								},
+						   		'post',
+							   	function(data){
+							   		if(data.code == 200){
+							   			//回收站清空成功
+							   			mui.toast('回收站已清空');
+							   			app.trashList = [];
+							   		} 
+							   		else{
+							   			//回收站清空失败
+							   			mui.toast(data.message);
+								   	}
+							   	},
+							   	function(){
+							   		mui.toast('系统错误，请稍后重新尝试');
+							   	},
+							   	true
+							);
+						}
+					});
+				});
+				//更多页面
+				mui("#progressbar").progressbar({progress: parseInt(app.userInfo.storageUsed) / parseInt(app.userInfo.storageSize) * 100}).show();
+				mui('#nickNameBtn')[0].addEventListener('tap', function(){
+					console.log('昵称修改操作');
+					var btnArray = ['取消', '确定'];
+					mui.prompt('请输入新昵称：', app.userInfo.nickName, '昵称修改', btnArray, function(e) {
+						if (e.index == 1) {
+							console.log(e.value);
+							var val = e.value;
+							var userObj = {
+								userId: app.userInfo.userId,
+								name: app.userInfo.name,
+								nickName: val,
+								email: app.userInfo.email
+							};
+							if(val == ''){
+								mui.toast('昵称修改失败，不可为空');
+								return;
+							}
+							else{
+								util.ajax('users/update', userObj,
+						   		'post',
+							   	function(data){
+							   		if(data.code == 200){
+							   			//个人信息更新成功
+							   			mui.toast('昵称修改成功');
+							   			app.userInfo.nickName = val;
+							   		} 
+							   		else{
+							   			//个人信息更新失败
+							   			mui.toast(data.message);
+								   	}
+							   	},
+							   	function(){
+							   		mui.toast('系统错误，请稍后重新尝试');
+							   	},
+							   	true
+							);
+							}
+						} else {
+							console.log('你点了取消按钮');
+						}
+					});
+				});
+				mui('#emailBtn')[0].addEventListener('tap', function(){
+					console.log('邮箱修改操作');
+					var btnArray = ['取消', '确定'];
+					mui.prompt('请输入新邮箱：', app.userInfo.email, '邮箱修改', btnArray, function(e) {
+						if (e.index == 1) {
+							console.log(e.value);
+							var val = e.value;
+							var userObj = {
+								userId: app.userInfo.userId,
+								name: app.userInfo.name,
+								nickName: app.userInfo.nickName,
+								email: val
+							};
+							if(val == ''){
+								mui.toast('邮箱修改失败，不可为空');
+								return;
+							}
+							else{
+								util.ajax('users/update', userObj,
+						   		'post',
+							   	function(data){
+							   		if(data.code == 200){
+							   			//个人信息更新成功
+							   			mui.toast('邮箱修改成功');
+							   			app.userInfo.email = val;
+							   		} 
+							   		else{
+							   			//个人信息更新失败
+							   			mui.toast(data.message);
+								   	}
+							   	},
+							   	function(){
+							   		mui.toast('系统错误，请稍后重新尝试');
+							   	},
+							   	true
+							);
+							}
+						} else {
+							console.log('你点了取消按钮');
+						}
+					});
+				});
+				mui('#storageSizeBtn')[0].addEventListener('tap', function(){
+					console.log('容量扩充申请操作');
+					var btnArray = ['取消', '确定'];
+					mui.prompt('请输入扩充容量（MB）：', '原容量    ' + app.userInfo.storageSize, '云盘容量扩充申请', btnArray, function(e) {
+						if (e.index == 1) {
+							console.log(e.value);
+							var val = e.value;
+							console.log(val)
+							if(val == ''){
+								mui.toast('容量扩充申请修改失败，不可为空');
+								return;
+							}
+							else{
+								var expandReq = {
+									userId  : app.userInfo.userId,
+    								userName : app.userInfo.name,
+								    storageUsed : app.userInfo.storageUsed,
+								    originalSize : app.userInfo.storageSize,
+								    expandSize : val
+								}
+								util.ajax('expandReqs',  expandReq,
+						   		'post',
+							   	function(data){
+							   		if(data.code == 200){
+							   			//申请提交成功
+							   			mui.toast('容量扩充申请已提交，请等待审核');
+							   		} 
+							   		else{
+							   			//申请提交失败
+							   			mui.toast(data.message);
+								   	}
+							   	},
+							   	function(){
+							   		mui.toast('系统错误，请稍后重新尝试');
+							   	},
+							   	true
+							);
+							}
+						} else {
+							console.log('你点了取消按钮');
+						}
+					});
+				});
+				mui('#userMessBtn')[0].addEventListener('tap', function(){
+					console.log('用户反馈操作');
+					mui.toast('未实现');
+				});
+				mui('#userLogoutBtn')[0].addEventListener('tap', function(){
+					console.log('用户注销操作');
+					var btnArray = ['取消', '确定'];
+					mui.confirm('注销该用户', null, btnArray, function(e) {
+						if (e.index == 1) {
+							console.log('你点了取消按钮');								
+						} else {
+							util.ajax('users/delete', {
+									ids: [ app.userInfo.userId ]
+								},
+						   		'post',
+							   	function(data){
+							   		if(data.code == 200){
+							   			//用户注销成功
+							   			mui.toast('该用户已注销');
+							   			app.userInfo = null;
+							   			localStorage.setItem('userinfo', null);
+							   			localStorage.setItem('token', null);
+			 							mui.openWindow({
+			 								url: 'index.html',
+			 								id: 'index',
+			 								extras:{flag: true}
+			 							});
+							   		} 
+							   		else{
+							   			//用户注销失败
+							   			mui.toast(data.message);
+								   	}
+							   	},
+							   	function(){
+							   		mui.toast('系统错误，请稍后重新尝试');
+							   	},
+							   	true
+							);
+						}
+					});
+				});
+				mui('#userExitBtn')[0].addEventListener('tap', function(){
+					console.log('用户退出操作');
+//			 							mui.openWindow({
+//			 								url: '../index/index.html',
+//			 								id: 'index' + parseInt(Math.random() * 10000),
+//			 								extras:{flag: true}
+//			 							});
+//			 							return;
+					var btnArray = ['取消', '确定'];
+					mui.confirm('退出登录', null, btnArray, function(e) {
+						if (e.index == 1) {
+							console.log('你点了取消按钮');								
+						} else {
+							util.ajax('users/logout/' + app.userInfo.userId, { },
+						   		'post',
+							   	function(data){
+							   		if(data.code == 200){
+							   			//用户退出成功
+							   			mui.toast('已退出登录');
+							   			app.userInfo = null;
+							   			localStorage.setItem('userinfo', null);
+							   			localStorage.setItem('token', null);
+			 							mui.openWindow({
+			 								url: 'index.html',
+			 								id: 'index' + parseInt(Math.random() * 10000),
+			 								extras:{flag: true}
+			 							});
+							   		} 
+							   		else{
+							   			//用户退出失败
+							   			mui.toast(data.message);
+								   	}
+							   	},
+							   	function(){
+							   		mui.toast('系统错误，请稍后重新尝试');
+							   	},
+							   	true
+							);
+						}
+					});
+			 	}); 
+			});
+			
+		</script>
+	</body>
+	
+</html>

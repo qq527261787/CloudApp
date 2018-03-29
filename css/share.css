@@ -1,0 +1,83 @@
+/*
+			防止渲染未完成之前出现混乱
+			 */
+			[display = no]{
+				display: none;
+			}
+			/*功能选择列表*/
+			.fuc-list{
+				position: fixed;
+				z-index: 999;
+				top: 0;
+				left: 0;
+				height: 100%;
+				width: 100%;
+				background-color: rgba(0, 0, 0, 0.3);
+			}
+			.fuc-list ul{
+				padding: 0 5px;
+				margin: 0;
+				position: absolute;
+				bottom: 0px;
+				height: 50px;
+				width: 100%;
+				list-style: none;
+				background-color: black;
+			}
+			.fuc-list ul li{
+				width: 16.6%;
+				float: left;
+				height: 50px;
+				line-height: 50px;
+				text-align: center;
+				font-size: 16px;
+				font-weight: normal;
+				color: white;
+			}
+			.sort-fuc-list li{
+				width: 40% !important;
+			}
+			.sort-fuc-list li:last-child{
+				width: 20% !important;
+			}
+			.down-fuc-list li{
+				width: 50% !important;
+			}
+			.fuc-list ul li:hover{
+				color: blue;
+			}
+			.fuc-list ul li:last-child{
+				color: green;
+			}
+			/*列表项*/
+			.panlist-item{
+				padding-left: 15px;
+				border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+				height: 65px; 
+			}
+			/*列表图标*/
+			.comment-head-photo{
+				width: 50px !important;
+				height: 50px !important;
+			}
+			.mt7{
+				margin-top: 7px;
+			}
+			.dark-medium{
+				color: #333333;
+				font-size: 14px;
+				margin-left: 60px;
+				padding-top: 7px;
+			}
+			.gray-medium{
+				color: #A2A2A2;
+				font-size: 10px; 
+				margin: 0; 
+				padding: 0; 
+				margin-left: 60px;
+			}
+			/*更多*/
+			.network-dist-scroll .pan-get-more{
+				color: gray;
+				text-align: center;
+			}

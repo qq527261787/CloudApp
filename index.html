@@ -1,19 +1,388 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title></title>
-    <script type="text/javascript">
-    	
-   		document.addEventListener('plusready', function(){
-   			//console.log("所有plus api都应该在此事件发生后调用，否则会出现plus is undefined。"
-   			
-   		});
-   		
-    </script>
-</head>
-<body>
 	
-</body>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	    <meta name="apple-mobile-web-app-capable" content="yes" />
+	    <title>cloud</title>
+		<!--<link rel="stylesheet" href="css/share.css" />-->
+	    <link rel="stylesheet" href="lib/mui/css/mui.min.css"/>
+	    <style>
+	    	/*
+			防止渲染未完成之前出现混乱
+			 */
+			[v-cloak = no]{
+				display: none;
+			}
+			
+			body{
+				width: 100%;
+				height: 100%;
+			}
+			
+	    	.index-page{
+				position: absolute;
+				bottom: 0px;
+				width: 100%;
+				text-align: center;
+			}
+			.index-icon{
+				width: 70%;
+			}
+			.index-text{
+			    font-size: 10px;
+			    color: gray;
+			}
+			
+			.initial-content{
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				display: table;
+				padding: 20px 20px 70px 20px;
+			}
+			.initial-content-cell{
+				display: table-cell;
+				vertical-align: middle;
+			}
+			.initial-footer{
+				width: 100%;
+				position: fixed;
+				bottom: 0px;
+				padding: 15px 30px;
+				z-index: 999;
+			}
+			.initial-image{
+				width: 80%;
+			}
+			.initial-btn{
+				height: 40px;
+				width: 100%;
+				max-width: 300px;
+				font-weight: 700;
+			}
+			
+			.content-table{
+				width: 100%;
+				display: table;
+				text-align: center;
+				vertical-align: middle;
+			}
+			.content-table-row{
+				display: table-row;
+			}
+			.input-fs{
+				font-size: 14px;
+			}
+			.cloud-icon{
+				width: 50%;
+				max-width: 300px;
+			}
+			.input-margin{
+				margin-left: 5%;
+				margin-right: 5%;
+				margin-top: 5px;
+				margin-bottom: 25px;
+			}
+			.input-button{
+				width: 90%;
+				height: 40px;
+			}
+			.border{
+				border: 1px solid rgba(0, 0, 0, .1);
+			}
+	    </style>
+	</head>
+	
+	<body>
+		
+		<div class="indexapp">
+			<div id="index">
+				<table class="index-page" v-cloak>
+					<tr>
+						<td>
+							<img class="index-icon" src="img/icon.png" alt="icon error!"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="index-text">
+							&copy;&nbsp;2017&nbsp;JR-SWJTU.dispaly,&nbsp;all rights reserved.
+						</td>
+					</tr>
+				</table>
+			</div>
+			
+			<div id="initial" v-cloak='no'>
+				<div class="initial-content">
+					<div class="initial-content-cell">
+						<h2 class="mui-text-center">数据云存储</h2>
+						<p class="mui-text-center">图片、文件分布式存储备份，让您再也不必担心数据丢失啦</p>
+						<div class="mui-text-center">
+							<img src="img/storage.png" class="initial-image"/>
+						</div>
+					</div>
+				</div>
+				<div class="initial-footer">
+					<div class="mui-row">
+					    <div class="mui-col-sm-6 mui-col-xs-6 mui-text-center" style="padding-right: 10px;">
+					    	<button class="mui-btn mui-btn-blue initial-btn">登录</button>
+					    </div>
+					    <div class="mui-col-sm-6 mui-col-xs-6 mui-text-center" style="padding-left: 10px;">
+					    	<button class="mui-btn mui-btn-outlined initial-btn">注册</button>
+					    </div>
+					</div>
+				</div>
+			</div>
+			
+			<div id="login" v-cloak='no'>
+				<header class="mui-bar mui-bar-nav">
+				    <a id="loginBack" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+				    <h1 class="mui-title">登录</h1>
+				</header>
+				<div class="mui-content">
+					<div class="content-table">
+						<div class="content-table-row">
+							<img class="cloud-icon" src="img/cloud_icon.png"/>
+						</div>
+						<div class="content-table-row">
+							<form class="mui-input-group input-margin border">
+							    <div class="mui-input-row">
+							        <input id="phone" type="text" class="mui-input-clear input-fs" placeholder="账号">
+							    </div>
+							    <div class="mui-input-row">
+							        <input id="pwd" type="password" class="mui-input-password input-fs" placeholder="密码">
+							    </div>
+							</form>
+						</div>	
+						<div class="content-table-row">
+							<button id="loginBtn" class="mui-btn mui-btn-blue input-button">登录</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div id="register" v-cloak='no'>
+				<header class="mui-bar mui-bar-nav">
+				    <a id="registerBack" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+				    <h1 class="mui-title">注册</h1>
+				</header>
+				<div class="mui-content">
+					<div class="content-table">
+						<div class="content-table-row">
+							<img class="cloud-icon" src="img/cloud_icon.png" />
+						</div>
+						<div class="content-table-row">
+							<form class="mui-input-group input-margin border">
+							    <div class="mui-input-row">
+							        <input id="rephone" type="text" class="mui-input-clear input-fs" placeholder="请输入手机号">
+							    </div>
+							    <div class="mui-input-row">
+							        <input id="rename" type="text" class="mui-input-clear input-fs" placeholder="请输入用户姓名">
+							    </div>
+							    <div class="mui-input-row">
+							        <input id="repwd" type="password" class="mui-input-password input-fs" placeholder="请输入密码">
+							    </div>
+							    <div class="mui-input-row">
+							        <input id="rerepwd" type="password" class="mui-input-password input-fs" placeholder="请重新输入密码">
+							    </div>
+							</form>
+						</div>
+						<div class="content-table-row">
+							<button id="registerBtn" class="mui-btn mui-btn-blue input-button">注册</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="lib/mui/js/mui.js"></script>
+		<script type="text/javascript" src="js/util.js" ></script>
+		<script type="text/javascript">
+			mui.init({
+				preloadPages:[
+			  	],
+				keyEventBind: {
+				}
+			});
+			
+			var pageChange = function(re, now){
+				mui('#' + re)[0].setAttribute('v-cloak', 'no');
+				mui('#' + now)[0].setAttribute('v-cloak', '');
+			}
+			
+			mui.plusReady(function() {
+			   	//判断初始页面
+				var self = plus.webview.currentWebview();
+    			var flag = self.flag;//获得参数
+    			console.log(flag);
+    			
+				//initial页面btn响应
+				mui('.initial-btn').each(function(){
+					this.addEventListener('tap', function(){
+						if(this.innerHTML == '登录'){
+							pageChange('initial', 'login');
+						}
+						else if(this.innerHTML == '注册'){
+							pageChange('initial', 'register');
+						}
+					})
+				});
+				//login页面btn响应 
+				mui('#loginBtn')[0].addEventListener('tap', function(e){
+			   		var phone = mui('#phone')[0].value;
+			   		var pwd = mui('#pwd')[0].value;
+			   		
+			   		//跳转页面，测试使用
+			 		mui.openWindow({
+			 			url: 'content.html',
+			 			id: 'content' + parseInt(Math.random() * 10000)
+			 		});
+			 		if(flag){
+			 			return;
+			 		}
+			 		var userinfo = {
+				        "email": "",
+				        "name": "jisir",
+				        "nickName": "",
+				        "phone": "18328041252",
+				        "storageSize": 10240,
+				        "storageUsed": 0,
+				        "userId": 1,
+				        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MTY3NzQwNTMsInN1YiI6IntcInVzZXJOYW1lXCI6XCJqaXNpclwiLFwidXNlckxvZ2luTmFtZVwiOlwiMVwifSIsImlzcyI6ImpyLmNsb3VkLnNlcnZlciIsImF1ZCI6Imppc2lyIn0.Qx7nNNSzxM8p3lM4COQN9aWi_XZPSZxAnZYvdGaj5DM"
+				   	};
+				   	var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MTY3NzQwNTMsInN1YiI6IntcInVzZXJOYW1lXCI6XCJqaXNpclwiLFwidXNlckxvZ2luTmFtZVwiOlwiMVwifSIsImlzcyI6ImpyLmNsb3VkLnNlcnZlciIsImF1ZCI6Imppc2lyIn0.Qx7nNNSzxM8p3lM4COQN9aWi_XZPSZxAnZYvdGaj5DM";
+				   	localStorage.setItem('userinfo', JSON.stringify(userinfo));
+				   	localStorage.setItem('token', token);
+
+			   		
+			   		if(phone == '' || pwd == ''){
+			   			mui.toast('手机号或密码不可为空');
+			   			return;
+			   		}
+			   		
+			   		var wt=plus.nativeUI.showWaiting();
+			   		util.ajax('users/login', {
+			   				phone: phone,
+			   				pwd: pwd
+			   			},
+			   			'post',
+				   		function(data){
+				   			if(data.code == 200){
+				   				//登录成功
+				   				//mui 不提供共享页面的全局变量，使用本地存储代替
+				   				localStorage.setItem('userinfo', JSON.stringify(data.data));
+				   				localStorage.setItem('token', data.data.token);
+				   				
+				   				console.log(data.data.token);
+				   				wt.close();
+				   				//页面跳转
+						 		mui.openWindow({
+						 			url: 'content.html',
+						 			id: 'content' + parseInt(Math.random() * 10000)
+						 		});
+				   			}
+				   			else{
+				   				//登录失败
+				   				wt.close();
+			   					mui.toast(data.message);
+				   			}
+			   			},
+			   			function(){
+				   			wt.close();
+			   				mui.toast('系统错误，请稍后重新尝试登录');
+			   			},
+			   			false
+			   		);
+			   	});
+			   	mui('#loginBack')[0].addEventListener('tap', function(e){
+			   		pageChange('login', 'initial');
+			   	});
+			   	//register页面btn响应
+			   	mui('#registerBtn')[0].addEventListener('tap', function(e){
+			   		var phone = mui('#rephone')[0].value;
+				   	var name = mui('#rename')[0].value;
+				   	var pwd = mui('#repwd')[0].value;
+				   	var repwd = mui('#rerepwd')[0].value;
+				   		
+				   	if(phone == ''){
+				   		mui.toast('手机号不可为空');
+				   		return;
+				   	}
+				   	else if(name == ''){
+				   		mui.toast('用户姓名不可为空');
+				   		return;
+				   	}
+				   	else if(pwd == ''){
+				   		mui.toast('密码不可为空');
+				   		return;
+				   	}
+				   	else if(pwd != repwd){
+				   		mui.toast('两次输入密码不一致');
+				   		return;
+				   	}
+				   		
+			   		var wt=plus.nativeUI.showWaiting();
+				   	util.ajax('users/register', {
+				   			phone: phone,
+				   			pwd: pwd,
+				   			name: name
+				   		},
+				   		'post',
+					   	function(data){
+					   		if(data.code == 200){
+					   			//注册成功
+				   				mui.toast('注册成功, 1s后跳转至登录页面');
+				   				
+				   				wt.close();
+				   				mui.later(function(){
+									pageChange('register', 'login');
+								}, 1000);
+					   		}
+					   		else{
+					   			//注册失败
+				   				wt.close();
+				   				mui.toast(data.message);
+					   		}
+				   		},
+				   		function(){
+				   			wt.close();
+			   				mui.toast('系统错误，请稍后重新尝试注册');
+				   		},
+				   		false
+				   	);
+			   	});
+			   	mui('#registerBack')[0].addEventListener('tap', function(e){
+			   		pageChange('register', 'initial');
+			   	});
+			   	
+    			if(flag){
+					pageChange('index', 'login'); 
+					
+					//重新登陆测试数据
+//					var userinfo = {
+//				        "email": "",
+//				        "name": "yyyyy",
+//				        "nickName": "",
+//				        "phone": "18328041252",
+//				        "storageSize": 10240,
+//				        "storageUsed": 0,
+//				        "userId": 1,
+//				        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MTY3NzQwNTMsInN1YiI6IntcInVzZXJOYW1lXCI6XCJqaXNpclwiLFwidXNlckxvZ2luTmFtZVwiOlwiMVwifSIsImlzcyI6ImpyLmNsb3VkLnNlcnZlciIsImF1ZCI6Imppc2lyIn0.Qx7nNNSzxM8p3lM4COQN9aWi_XZPSZxAnZYvdGaj5DM"
+//				   	};
+//				   	var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MTY3NzQwNTMsInN1YiI6IntcInVzZXJOYW1lXCI6XCJqaXNpclwiLFwidXNlckxvZ2luTmFtZVwiOlwiMVwifSIsImlzcyI6ImpyLmNsb3VkLnNlcnZlciIsImF1ZCI6Imppc2lyIn0.Qx7nNNSzxM8p3lM4COQN9aWi_XZPSZxAnZYvdGaj5DM";
+//				   	localStorage.setItem('userinfo', JSON.stringify(userinfo));
+//				   	localStorage.setItem('token', token);
+					
+					return;
+    			}
+			   	
+				//初始页面定时跳转至initial页
+				mui.later(function(){
+					pageChange('index', 'initial');
+				}, 2000);
+			});
+		</script>
+	</body>
+
 </html>
