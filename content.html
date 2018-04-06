@@ -988,7 +988,8 @@
 					console.log('单文件删除操作');
 					util.ajax('files/deleteDir', {
 				  			path: app.now_panItem.fullPath,
-				  			id: app.userInfo.userId
+				  			id: app.userInfo.userId,
+				  			category: app.now_panItem.category ? 1 : 0
 				   		},
 				   		'post',
 					   	function(data){
