@@ -540,7 +540,7 @@
 			var fileDown = function(filePath){
 				console.log(filePath);
 //				var url = "http://snip.qq.com/resources/Snip_V2.0_5771.dmg";
-				var url = utl.downUrl.left + filePath + util.downUrl.right;
+				var url = util.downUrl.left + filePath + util.downUrl.right;
 				console.log(url);
 				var options = {method:"GET"};
 				var dtask = plus.downloader.createDownload( url, options);
@@ -589,7 +589,12 @@
 				   			//获取成功
 				   			console.log('文件列表获取成功')
 //				   			app.$set(app,'panList',data.data);
-				   			app.panList = data.data;
+							app.panList = [];
+							
+							mui.later(function(){
+								app.panList = data.data;
+							}, 30);
+				   			
 				   			app.panBasePath = path;
 				   		} 
 				   		else{
@@ -631,7 +636,8 @@
 				//未使用分页方式
 				util.ajax('fileUploadHis', {
 			  			pageNum: 1,
-			  			pageSize: 999  //使用999测试
+			  			pageSize: 999,  //使用999测试
+			  			userId: app.userInfo.userId
 			   		},
 			   		'post',
 				   	function(data){
@@ -639,7 +645,12 @@
 				   		if(data.code == 200){
 				   			//获取成功
 				   			console.log('上传记录列表获取成功')
-				   			app.transUpRecordList = data.data.rows;
+				   			
+				   			app.transUpRecordList = [];
+							
+							mui.later(function(){
+								app.transUpRecordList = data.data.rows;
+							}, 30);
 				   		} 
 				   		else{
 				   			//获取失败
@@ -659,7 +670,8 @@
 				//未使用分页方式
 				util.ajax('fileDownloadHis', {
 			  			pageNum: 1,
-			  			pageSize: 999  //使用999测试
+			  			pageSize: 999,  //使用999测试
+			  			userId: app.userInfo.userId
 			   		},
 			   		'post',
 				   	function(data){
@@ -667,7 +679,12 @@
 				   		if(data.code == 200){
 				   			//获取成功
 				   			console.log('下载记录列表获取成功')
-				   			app.transDownRecordList = data.data.rows;
+				   			
+				   			app.transDownRecordList = [];
+							
+							mui.later(function(){
+								app.transDownRecordList = data.data.rows;
+							}, 30);
 				   		} 
 				   		else{
 				   			//获取失败
@@ -696,7 +713,12 @@
 				   		if(data.code == 200){
 				   			//获取成功
 				   			console.log('回收站文件列表获取成功')
-				   			app.trashList = data.data.rows;
+				   			
+				   			app.trashList = [];
+							
+							mui.later(function(){
+								app.trashList = data.data.rows;
+							}, 30);
 				   		} 
 				   		else{
 				   			//获取失败
@@ -943,7 +965,7 @@
 							   			//修改成功
 							   			getPanList('files/listFiles', app.panBasePath);
 							   			mui.toast('重命名成功');
-							   			app.now_panItem = null;
+							   			app.now_panItem = {};
 							   		} 
 							   		else{
 							   			//修改失败
@@ -973,20 +995,20 @@
 					   		if(data.code == 200){
 					   			//删除成功
 					   			mui.toast('删除成功');
-					   			//更新回收站文件列表
-								getTrashList();
+					   			//更新回收站、文件列表
 							   	getPanList('files/listFiles', app.panBasePath);
-								app.now_panItem = null;
+								getTrashList();
+								app.now_panItem = {};
 					   		} 
 					   		else{
 					   			//删除失败
 					   			mui.toast(data.message);
-								app.now_panItem = null;
+								app.now_panItem = {};
 						   	}
 					   	},
 					   	function(){
 					   		mui.toast('系统错误，请稍后重新尝试');
-							app.now_panItem = null;
+							app.now_panItem = {};
 					   	},
 					   	true
 					);
@@ -1120,7 +1142,7 @@
 						if (e.index == 1) {
 							console.log('你点了取消按钮');								
 						} else {
-							util.ajax('users/delete', {
+							util.ajax('fileDelRecs/deleteAll', {
 									userId: app.userInfo.userId
 								},
 						   		'post',
