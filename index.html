@@ -234,26 +234,26 @@
 			   		var pwd = mui('#pwd')[0].value;
 			   		
 			   		//跳转页面，测试使用
-			 		mui.openWindow({
-			 			url: 'content.html',
-			 			id: 'content' + parseInt(Math.random() * 10000)
-			 		});
-			 		if(flag){
-			 			return;
-			 		}
-			 		var userinfo = {
-				        "email": "",
-				        "name": "jisir",
-				        "nickName": "",
-				        "phone": "18328041252",
-				        "storageSize": 10240,
-				        "storageUsed": 0,
-				        "userId": 1,
-				        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MTY3NzQwNTMsInN1YiI6IntcInVzZXJOYW1lXCI6XCJqaXNpclwiLFwidXNlckxvZ2luTmFtZVwiOlwiMVwifSIsImlzcyI6ImpyLmNsb3VkLnNlcnZlciIsImF1ZCI6Imppc2lyIn0.Qx7nNNSzxM8p3lM4COQN9aWi_XZPSZxAnZYvdGaj5DM"
-				   	};
-				   	var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MTY3NzQwNTMsInN1YiI6IntcInVzZXJOYW1lXCI6XCJqaXNpclwiLFwidXNlckxvZ2luTmFtZVwiOlwiMVwifSIsImlzcyI6ImpyLmNsb3VkLnNlcnZlciIsImF1ZCI6Imppc2lyIn0.Qx7nNNSzxM8p3lM4COQN9aWi_XZPSZxAnZYvdGaj5DM";
-				   	localStorage.setItem('userinfo', JSON.stringify(userinfo));
-				   	localStorage.setItem('token', token);
+//			 		mui.openWindow({
+//			 			url: 'content.html',
+//			 			id: 'content' + parseInt(Math.random() * 10000)
+//			 		});
+//			 		if(flag){
+//			 			return;
+//			 		}
+//			 		var userinfo = {
+//				        "email": "",
+//				        "name": "jisir",
+//				        "nickName": "",
+//				        "phone": "18328041252",
+//				        "storageSize": 10240,
+//				        "storageUsed": 0,
+//				        "userId": 1,
+//				        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MTY3NzQwNTMsInN1YiI6IntcInVzZXJOYW1lXCI6XCJqaXNpclwiLFwidXNlckxvZ2luTmFtZVwiOlwiMVwifSIsImlzcyI6ImpyLmNsb3VkLnNlcnZlciIsImF1ZCI6Imppc2lyIn0.Qx7nNNSzxM8p3lM4COQN9aWi_XZPSZxAnZYvdGaj5DM"
+//				   	};
+//				   	var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MTY3NzQwNTMsInN1YiI6IntcInVzZXJOYW1lXCI6XCJqaXNpclwiLFwidXNlckxvZ2luTmFtZVwiOlwiMVwifSIsImlzcyI6ImpyLmNsb3VkLnNlcnZlciIsImF1ZCI6Imppc2lyIn0.Qx7nNNSzxM8p3lM4COQN9aWi_XZPSZxAnZYvdGaj5DM";
+//				   	localStorage.setItem('userinfo', JSON.stringify(userinfo));
+//				   	localStorage.setItem('token', token);
 
 			   		
 			   		if(phone == '' || pwd == ''){

@@ -94,6 +94,13 @@
 			.mui-slider{
 				margin-top: 44px;
 			}
+			.transfor-text{
+				padding: 0 20px;
+				font-size: 10px;
+				color: rgb(0, 0, 100);
+				background-color: rgba(0, 0, 100, 0.05);
+				border-bottom: 1px solid white;
+			}
 			/*传输列表*/
 			/*.panlist-item .item-right{
 				float: right;
@@ -206,9 +213,7 @@
 							{{userInfo.name}}
 						</div>
 						<div class="upload-fuc">
-							<div id="uploadBtn" class="upload-btn">
-								上传
-							</div>
+							<div id="uploadBtn" class="upload-btn">上传</div>
 						</div>
 					</div>
 				</header>
@@ -254,7 +259,7 @@
 				<header class="mui-bar mui-bar-nav">
 				    <h1 class="mui-title">传输列表</h1>
 				</header>
-				<div id="transfor" class="mui-slider">
+				<div id="slider" class="mui-slider">
 					<div id="transforSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
 						<a class="mui-control-item mui-active" href="#uploadTransfor">
 							上传文件
@@ -263,11 +268,12 @@
 							下载文件
 						</a>
 					</div>
-					<div id="transforProgressBar" class="mui-slider-progress-bar mui-col-xs-6"></div>
+					<div id="transforProgressBar" class="mui-slider-progress-bar mui-col-xs-12"></div>
 					<div class="mui-slider-group">
-						<div id="uploadTransfor" class="mui-slider-item mui-control-content">
+						<div id="uploadTransfor" class="mui-slider-item mui-control-content mui-active">
 							<div id="uploadScroll" class="mui-scroll-wrapper transfor-scroll">
 								<div class="mui-scroll">
+									<div class="transfor-text">正在上传({{transUpList.length}})</div>
 									<ul class="mui-table-view mui-table-view-chevron">
 										<li class="panlist-item" v-for="item, key in transUpList" :key="key" @click="transUpListItem(item)">
 											<!--文件夹图标显示-->
@@ -278,24 +284,47 @@
 											<p class="gray-medium">{{item.createTime}}</p>
 										</li>
 									</ul>
+									<div class="transfor-text">上传记录({{transUpRecordList.length}})</div>
+									<ul class="mui-table-view mui-table-view-chevron">
+										<li class="panlist-item" v-for="item, key in transUpRecordList" :key="key">
+											<!--文件夹图标显示-->
+											<img v-show="item.category" src="img/package.png" class="comment-head-photo mui-pull-left mt7" />
+											<!--文件图标-->
+											<img v-show="!item.category" src="img/file.png" class="comment-head-photo mui-pull-left mt7" />
+											<p class="dark-medium">{{item.fileName}}</p>
+											<p class="gray-medium">{{item.uploadDate}}</p>
+										</li>
+									</ul>
 								</div>
 							</div>
 						</div>
-						<div id="downloadTransfor" class="mui-slider-item mui-control-content mui-active">
+						<div id="downloadTransfor" class="mui-slider-item mui-control-content">
 							<div id="downloadScroll" class="mui-scroll-wrapper transfor-scroll">
 								<div class="mui-scroll">
+									<div class="transfor-text">正在下载({{transDownList.length}})</div>
 									<ul class="mui-table-view mui-table-view-chevron">
 										<li class="panlist-item" v-for="item, key in transDownList" :key="key" @click="transDownListItem(item)">
 											<!--文件夹图标显示-->
 											<img v-show="item.category" src="img/package.png" class="comment-head-photo mui-pull-left mt7"/>
 											<!--文件图标-->
 											<img v-show="!item.category" src="img/file.png" class="comment-head-photo mui-pull-left mt7"/>
-											<p class="dark-medium">{{item.filename}}</p>
+											<p class="dark-medium">{{item.name}}</p>
 											<p class="gray-medium">{{item.downloadedSize + "/" + item.totalSize + " KB"}}</p>
 											<!--<div class="item-right">
 												<img v-show="!item.flag" src="img/play.png" class="right-icon" @click="playDownItem(item)"/>
 												<img v-show="item.flag" src="img/pause.png" class="right-icon" @click="pauseDownItem(item)"/>
 											</div>-->
+										</li>
+									</ul>
+									<div class="transfor-text">下载记录({{transDownRecordList.length}})</div>
+									<ul class="mui-table-view mui-table-view-chevron">
+										<li class="panlist-item" v-for="item, key in transDownRecordList" :key="key">
+											<!--文件夹图标显示-->
+											<img v-show="item.category" src="img/package.png" class="comment-head-photo mui-pull-left mt7" />
+											<!--文件图标-->
+											<img v-show="!item.category" src="img/file.png" class="comment-head-photo mui-pull-left mt7" />
+											<p class="dark-medium">{{item.fileName}}</p>
+											<p class="gray-medium">{{item.downloadDate}}</p>
 										</li>
 									</ul>
 								</div>
@@ -417,8 +446,8 @@
 			
 			<div class="transdown-fuc-list fuc-list" display="no">
 				<ul class="down-fuc-list">
-					<li v-show="!app.now_transDownItem.flag" id="downStartBtn">重新开始</li>
-					<li v-show="app.now_transDownItem.flag" id="downPauseBtn">暂停</li>
+					<li v-show="!now_transDownItem.flag" id="downStartBtn">重新开始</li>
+					<li v-show="now_transDownItem.flag" id="downPauseBtn">暂停</li>
 					<li id="downCancelBtn">取消</li>
 				</ul>
 			</div>
@@ -443,6 +472,8 @@
 			</a>
 		</nav>
 		
+    	<!--<script type="text/javascript" src="lib/jquery/jquery-3.3.1.min.js"></script>
+    	<script type="text/javascript" src="lib/webuploader-0.1.5/webuploader.min.js"></script>-->
 		<script type="text/javascript" src="lib/mui/js/mui.min.js"></script>
 		<script type="text/javascript" src="lib/vue/vue.min.js"></script>
 		<script type="text/javascript" src="js/util.js" ></script>
@@ -461,7 +492,9 @@
 					panList: [],
 					panBasePath: '',
 					transUpList: [],
+					transUpRecordList: [],
 					transDownList: [],
+					transDownRecordList: [],
 					trashList: [],
 					now_panItem: {},
 					now_transItem: {},
@@ -502,6 +535,48 @@
 			//获取登录用户信息
 			app.userInfo = JSON.parse(localStorage.getItem('userinfo'));
 			var token = localStorage.getItem('token');
+			
+			//文件下载
+			var fileDown = function(filePath){
+				console.log(filePath);
+//				var url = "http://snip.qq.com/resources/Snip_V2.0_5771.dmg";
+				var url = utl.downUrl.left + filePath + util.downUrl.right;
+				console.log(url);
+				var options = {method:"GET"};
+				var dtask = plus.downloader.createDownload( url, options);
+				console.log(dtask.filename);
+				dtask.addEventListener( "statechanged", function(task, status){
+					if(!dtask){ 
+						mui.toast('下载任务创建失败');
+						return; 
+					}
+					else{
+						var ns = filePath.split('/');
+						dtask.name = ns[ns.length - 1];
+						dtask.flag = true;
+						console.log('下载任务创建成功');
+					}
+					switch(task.state) {
+						case 1: // 开始
+							mui.toast( '开始下载...');
+							break;
+						case 2: // 已连接到服务器
+						    console.log( "链接到服务器..." );
+						    break;
+						case 3:	// 已接收到数据
+		//				    console.log(task.downloadedSize + "/" + task.totalSize );
+						    break;
+						case 4:	// 下载完成
+						    console.log(dtask.filename + '下载完成！' );
+						    getDownRecodList();
+		//				    dtask.filename = dtask.filename.split('/')[1];
+		//				    dtask.filename = dtask.filename.split('?')[0];
+						    dtask.flag = 0;
+						    break;
+					}
+				});
+				return dtask;
+			}
 			
 			//获取文件列表
 			var getPanList = function(fuc, path){
@@ -552,6 +627,62 @@
 				}
 			}
 			
+			var getUpRecodList = function(){
+				//未使用分页方式
+				util.ajax('fileUploadHis', {
+			  			pageNum: 1,
+			  			pageSize: 999  //使用999测试
+			   		},
+			   		'post',
+				   	function(data){
+				   		console.log(data.code);
+				   		if(data.code == 200){
+				   			//获取成功
+				   			console.log('上传记录列表获取成功')
+				   			app.transUpRecordList = data.data.rows;
+				   		} 
+				   		else{
+				   			//获取失败
+				   			console.log(data.message);
+//				   			mui.toast(data.message);
+					   	}
+				   	},
+				   	function(){
+				   		console.log('系统错误，请稍后重新尝试');
+//				   		mui.toast('系统错误，请稍后重新尝试');
+				   	},
+				   	true
+				);
+			}
+			
+			var getDownRecodList = function(){
+				//未使用分页方式
+				util.ajax('fileDownloadHis', {
+			  			pageNum: 1,
+			  			pageSize: 999  //使用999测试
+			   		},
+			   		'post',
+				   	function(data){
+				   		console.log(data.code);
+				   		if(data.code == 200){
+				   			//获取成功
+				   			console.log('下载记录列表获取成功')
+				   			app.transDownRecordList = data.data.rows;
+				   		} 
+				   		else{
+				   			//获取失败
+				   			console.log(data.message);
+//				   			mui.toast(data.message);
+					   	}
+				   	},
+				   	function(){
+				   		console.log('系统错误，请稍后重新尝试');
+//				   		mui.toast('系统错误，请稍后重新尝试');
+				   	},
+				   	true
+				);
+			}
+			
 			var getTrashList = function(){
 				//未使用分页方式
 				util.ajax('fileDelRecs', {
@@ -559,7 +690,7 @@
 			  			pageSize: 999,  //使用999测试
 			  			userId: app.userInfo.userId
 			   		},
-			   		'get',
+			   		'post',
 				   	function(data){
 				   		console.log(data.code);
 				   		if(data.code == 200){
@@ -588,15 +719,15 @@
 				}, 20);
 			};
 			
-			var listDeleteOne = function(oldlist, obj){
-				var newlist = [];
-				oldlist.forEach(function(item, index){
-					if(item.fullPath != obj.fullPath){
-						newlist.push(item);
-					}
-				});
-				return newlist;
-			};
+//			var listDeleteOne = function(oldlist, obj){
+//				var newlist = [];
+//				oldlist.forEach(function(item, index){
+//					if(item.fullPath != obj.fullPath){
+//						newlist.push(item);
+//					}
+//				});
+//				return newlist;
+//			};
 			
 			mui.plusReady(function() {
 				//获取页面高度，为动态设置滚动条高度
@@ -629,67 +760,70 @@
 				});
 				
 				//测试数据赋值
-				app.panList = app.transUpList = [
-			        {
-			            fullPath: "/input/APIAccess.log.2016-09-05.241",
-			            fileName: "APIAccess.log.2016-09-05.241",
-			            createTime: "2018-01-29 05:59",
-			            category: false,
-			            fileSize: 9,
-			            formatSize: "9.00",
-			            unit: "B"
-			        },
-			        {
-			            fullPath: "/input/APIAccess.log.2016-09-05.241",
-			            fileName: "AM.log.2016-09-05.241",
-			            createTime: "2018-01-28 05:59",
-			            category: true,
-			            fileSize: 9,
-			            formatSize: "9.00",
-			            unit: "B"
-			        },
-			        {
-			            fullPath: "/input/APIAccess.log.2016-09-05.241",
-			            fileName: "BPIAccess.log.2016-09-05.241",
-			            createTime: "2018-01-29 07:59",
-			            category: false,
-			            fileSize: 9,
-			            formatSize: "9.00",
-			            unit: "B"
-			        },
-			        {
-			            fullPath: "/input/APIAccess.log.2016-09-05.241",
-			            fileName: "长.log.2016-09-05.241",
-			            createTime: "2018-01-28 06:59",
-			            category: true,
-			            fileSize: 9,
-			            formatSize: "9.00",
-			            unit: "B"
-			        }
-			    ];
-			    app.trashList = [
-		            {
-		                delId: 1,
-		                userId: 1,
-		                fileName: "aaa.jpg",
-		                savePath: "/1/aaa.jpg",
-		                delDate: "2018-02-01 15:18:33"
-		            }
-		        ];
+//				app.panList = app.transUpList = [
+//			        {
+//			            fullPath: "/input/APIAccess.log.2016-09-05.241",
+//			            fileName: "APIAccess.log.2016-09-05.241",
+//			            createTime: "2018-01-29 05:59",
+//			            category: false,
+//			            fileSize: 9,
+//			            formatSize: "9.00",
+//			            unit: "B"
+//			        },
+//			        {
+//			            fullPath: "/input/APIAccess.log.2016-09-05.241",
+//			            fileName: "AM.log.2016-09-05.241",
+//			            createTime: "2018-01-28 05:59",
+//			            category: true,
+//			            fileSize: 9,
+//			            formatSize: "9.00",
+//			            unit: "B"
+//			        },
+//			        {
+//			            fullPath: "/input/APIAccess.log.2016-09-05.241",
+//			            fileName: "BPIAccess.log.2016-09-05.241",
+//			            createTime: "2018-01-29 07:59",
+//			            category: false,
+//			            fileSize: 9,
+//			            formatSize: "9.00",
+//			            unit: "B"
+//			        },
+//			        {
+//			            fullPath: "/input/APIAccess.log.2016-09-05.241",
+//			            fileName: "长.log.2016-09-05.241",
+//			            createTime: "2018-01-28 06:59",
+//			            category: true,
+//			            fileSize: 9,
+//			            formatSize: "9.00",
+//			            unit: "B"
+//			        }
+//			    ];
+//			    app.trashList = [
+//		            {
+//		                delId: 1,
+//		                userId: 1,
+//		                fileName: "aaa.jpg",
+//		                savePath: "/1/aaa.jpg",
+//		                delDate: "2018-02-01 15:18:33"
+//		            }
+//		        ];
 				
 				//网盘页面
 				//获取网盘列表
 				getPanList('files/listFiles', '/' + app.userInfo.userId.toString());
+				//获取传输记录
+				getUpRecodList();
+				getDownRecodList();
 				//获取回收站文件列表
 				getTrashList();
 				//各按钮操作
-				mui('#uploadBtn')[0].addEventListener('tap', function(){
-					console.log('上传');
-			 		mui.openWindow({
-			 			url: 'uploader.html',
-			 			id: 'uploader'
-			 		});
-				});
+//				mui('#uploadBtn')[0].addEventListener('tap', function(){
+//					console.log('上传');
+//			 		mui.openWindow({
+//			 			url: 'uploader.html',
+//			 			id: 'uploader'
+//			 		});
+//				});
 				//文件排序操作
 				mui('#panSortBtn')[0].addEventListener('tap', function(){
 					console.log('排序');
@@ -841,7 +975,7 @@
 					   			mui.toast('删除成功');
 					   			//更新回收站文件列表
 								getTrashList();
-					   			app.panList = listDeleteOne(app.panList, app.now_panItem);
+							   	getPanList('files/listFiles', app.panBasePath);
 								app.now_panItem = null;
 					   		} 
 					   		else{
@@ -860,7 +994,7 @@
 				});
 				mui('#panFileDownloadBtn')[0].addEventListener('tap', function(){
 					console.log('单文件下载操作');
-					var task = util.fileDown(app.now_panItem.fullPath);
+					var task = fileDown(app.now_panItem.fullPath);
 					if(task){
 						task.start();
 						app.transDownList.push(task);
@@ -887,6 +1021,7 @@
 							   	function(data){
 							   		if(data.code == 200){
 							   			//移动成功
+							   			getPanList('files/listFiles', app.panBasePath);
 							   			mui.toast('移动成功');
 							   		} 
 							   		else{
@@ -1220,7 +1355,6 @@
 					});
 			 	}); 
 			});
-			
 		</script>
 	</body>
 	
