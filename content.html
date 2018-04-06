@@ -540,7 +540,7 @@
 			var fileDown = function(filePath){
 				console.log(filePath);
 //				var url = "http://snip.qq.com/resources/Snip_V2.0_5771.dmg";
-				var url = util.downUrl.left + filePath + util.downUrl.right;
+				var url = downUrl.left + filePath + downUrl.right;
 				console.log(url);
 				var options = {method:"GET"};
 				var dtask = plus.downloader.createDownload( url, options);
