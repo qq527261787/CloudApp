@@ -10,15 +10,18 @@
 	position: relative;
 	display: inline-block;
 	cursor: pointer;
-	background: #00b7ee;
-	padding: 10px 15px;
+	background-color: rgba(0, 0, 255, 0.1);
+	border: 1px solid rgba(0, 0, 255, 0.2);
+	padding: 3px 10px;
 	color: #fff;
+	font-weight: normal;
+	font-size: 14px !important; 
 	text-align: center;
 	border-radius: 3px;
 	overflow: hidden;
 }
 .webuploader-pick-hover {
-	background: #00a2d4;
+	background-color: rgba(0, 0, 255, 0.2);
 }
 
 .webuploader-pick-disable {

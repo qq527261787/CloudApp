@@ -1,13 +1,13 @@
 {
-	"index.html": {
-		"refer": [
-			"content.html"
-		]
-	},
-	"content.html": {
-		"refer": [
-			"search.html",
-			"uploader.html"
-		]
-	}
+  "index.html": {
+    "refer": [
+      "content.html"
+    ]
+  },
+  "content.html": {
+    "refer": [
+      "search.html",
+      "uploader.html"
+    ]
+  }
 }

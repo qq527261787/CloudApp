@@ -6,9 +6,17 @@
 		<title></title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
+	    <link rel="stylesheet" href="lib/webuploader-0.1.5/webuploader.css" />
 		<link rel="stylesheet" href="lib/mui/css/mui.min.css" />
 		<link rel="stylesheet" href="lib/iconfont/iconfont.css" />
 		<link rel="stylesheet" href="css/share.css"/>
+	    <!--<script type="text/javascript">
+	   		document.addEventListener('plusready', function(){
+	   			//console.log("所有plus api都应该在此事件发生后调用，否则会出现plus is undefined。"
+	   			
+	   		});
+	    </script>-->
+	    
 		<style>
 			/*网盘 用户信息栏*/
 			.user-info{
@@ -200,10 +208,20 @@
 				color: gray;
 				font-size: 14px;
 			}
+			
+			.btn-uploader{
+				position: fixed;
+				z-index: 999;
+				top: 20px;
+				right: 20px;
+			}
 		</style>
 	</head>
 
 	<body>
+		
+		<div id="picker" class="btn-uploader">上传</div>
+		
 		<div id="app" class="mui-content bodycontent">
 			<div id="network-dist" class="mui-control-content mui-active">
 				<header class="user-info">
@@ -213,7 +231,9 @@
 							{{userInfo.name}}
 						</div>
 						<div class="upload-fuc">
-							<div id="uploadBtn" class="upload-btn">上传</div>
+							<!--<div id="picker">上传</div>--> 
+							<!--<div id="uploadBtn" class="upload-btn">上传</div>-->
+							<!--<label for="picker" ></label>-->
 						</div>
 					</div>
 				</header>
@@ -280,8 +300,10 @@
 											<img v-show="item.category" src="img/package.png" class="comment-head-photo mui-pull-left mt7" />
 											<!--文件图标-->
 											<img v-show="!item.category" src="img/file.png" class="comment-head-photo mui-pull-left mt7" />
-											<p class="dark-medium">{{item.fileName}}</p>
-											<p class="gray-medium">{{item.createTime}}</p>
+											<p class="dark-medium">{{item.name}}</p>
+											<p v-show="item.size < 1000" class="gray-medium">"总大小：" + {{item.size}} + " B    当前上传：" + {{item.percentage}} + "%"</p>
+											<p v-show="item.size >= 1000 && item.size < 1000000" class="gray-medium">"总大小：" + {{(item.size / 1000).toFixed(2)}} + " KB    当前上传：" + {{item.percentage}} + "%"</p>
+											<p v-show="item.size >= 1000000" class="gray-medium">"总大小：" + {{(item.size / 1000000).toFixed(2)}} + " MB    当前上传：" + {{item.percentage}} + "%"</p>
 										</li>
 									</ul>
 									<div class="transfor-text">上传记录({{transUpRecordList.length}})</div>
@@ -346,7 +368,7 @@
 				<div id="pullrefresh" class="mui-scroll-wrapper trash-dist-scroll">
 					<div class="mui-scroll">
 						<ul class="mui-table-view mui-table-view-chevron">
-							<li class="panlist-item" v-for="item, key in trashList" :key="key">
+							<li class="panlist-item" v-for="item, key in trashList" :key="key" @click="trashListItem(item)">
 								<!--文件夹图标显示-->
 								<img v-show="item.category" src="img/package.png" class="comment-head-photo mui-pull-left mt7" />
 								<!--文件图标-->
@@ -439,16 +461,26 @@
 				</ul>
 			</div>
 			
-			<!--<div class="transup-fuc-list fuc-list" display="no">
-				<ul>
+			<div class="transup-fuc-list fuc-list" display="no">
+				<ul class="down-fuc-list">
+					<li v-show="!now_transUpItem.flag" id="upStartBtn">重新开始</li>
+					<li v-show="now_transUpItem.flag" id="upPauseBtn">暂停</li>
+					<li id="upCancelBtn">取消</li>
 				</ul>
-			</div>-->
+			</div>
 			
 			<div class="transdown-fuc-list fuc-list" display="no">
 				<ul class="down-fuc-list">
 					<li v-show="!now_transDownItem.flag" id="downStartBtn">重新开始</li>
 					<li v-show="now_transDownItem.flag" id="downPauseBtn">暂停</li>
 					<li id="downCancelBtn">取消</li>
+				</ul>
+			</div>
+			
+			<div class="trash-fuc-list fuc-list" display="no">
+				<ul class="down-fuc-list">
+					<li id="trashRecoverBtn">还原</li>
+					<li id="trashCancelBtn">取消</li>
 				</ul>
 			</div>
 		</div>
@@ -472,8 +504,8 @@
 			</a>
 		</nav>
 		
-    	<!--<script type="text/javascript" src="lib/jquery/jquery-3.3.1.min.js"></script>
-    	<script type="text/javascript" src="lib/webuploader-0.1.5/webuploader.min.js"></script>-->
+		<script type="text/javascript" src="lib/jquery/jquery-3.3.1.min.js"></script>
+    	<script type="text/javascript" src="lib/webuploader-0.1.5/webuploader.min.js"></script>
 		<script type="text/javascript" src="lib/mui/js/mui.min.js"></script>
 		<script type="text/javascript" src="lib/vue/vue.min.js"></script>
 		<script type="text/javascript" src="js/util.js" ></script>
@@ -497,7 +529,7 @@
 					transDownRecordList: [],
 					trashList: [],
 					now_panItem: {},
-					now_transItem: {},
+					now_transUpItem: {},
 					now_transDownItem: {},
 					now_trashItem: {}
 				},
@@ -508,14 +540,19 @@
 						mui('.pan-fuc-list')[0].setAttribute('display', '');
 					},
 					transUpListItem: function(item){
-						this.now_transItem = item;
-						console.log(this.now_transItem.fileName);
+						this.now_transUpItem = item;
+						console.log(this.now_transUpItem.name);
 						mui('.transup-fuc-list')[0].setAttribute('display', '');
 					},
 					transDownListItem: function(item){
 						this.now_transDownItem = item;
 						console.log(this.now_transDownItem.fileName);
 						mui('.transdown-fuc-list')[0].setAttribute('display', '');
+					},
+					trashListItem: function(item){
+						this.now_trashItem = item;
+						console.log(this.now_trashItem.fileName);
+						mui('.trash-fuc-list')[0].setAttribute('display', '');
 					}
 //					playDownItem: function(item){
 //						console.log(item.filename + ' 任务继续下载');
@@ -532,9 +569,193 @@
 				}
 			});
 			
+			//测试数据
+//					var userinfo = {
+//				        "email": "",
+//				        "name": "jisir",
+//				        "nickName": "",
+//				        "phone": "18328041252",
+//				        "storageSize": 10240,
+//				        "storageUsed": 0,
+//				        "userId": 1,
+//				        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MTY3NzQwNTMsInN1YiI6IntcInVzZXJOYW1lXCI6XCJqaXNpclwiLFwidXNlckxvZ2luTmFtZVwiOlwiMVwifSIsImlzcyI6ImpyLmNsb3VkLnNlcnZlciIsImF1ZCI6Imppc2lyIn0.Qx7nNNSzxM8p3lM4COQN9aWi_XZPSZxAnZYvdGaj5DM"
+//				   	};
+//				   	var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MTY3NzQwNTMsInN1YiI6IntcInVzZXJOYW1lXCI6XCJqaXNpclwiLFwidXNlckxvZ2luTmFtZVwiOlwiMVwifSIsImlzcyI6ImpyLmNsb3VkLnNlcnZlciIsImF1ZCI6Imppc2lyIn0.Qx7nNNSzxM8p3lM4COQN9aWi_XZPSZxAnZYvdGaj5DM";
+//				   	localStorage.setItem('userinfo', JSON.stringify(userinfo));
+//				   	localStorage.setItem('token', token);
+			
 			//获取登录用户信息
 			app.userInfo = JSON.parse(localStorage.getItem('userinfo'));
 			var token = localStorage.getItem('token');
+			
+			//监听分块上传过程中的三个时间点
+		    WebUploader.Uploader.register({
+		        "before-send-file" : "beforeSendFile",
+		        "before-send" : "beforeSend",
+		        "after-send-file" : "afterSendFile",
+		    }, {
+		        //时间点1：所有分块进行上传之前调用此函数
+		        beforeSendFile : function(file) {
+		            var deferred = WebUploader.Deferred();
+		            
+		            file.percentage = 0;
+		            
+		            (new WebUploader.Uploader()).md5File(file, 0, 10 * 1024 * 1024)
+	                    .progress(function(percentage) {
+//	                        $('#' + file.id).find("p.state").text("正在读取文件信息...");
+	                    }).then(function(val) {
+		                file.fileMd5 = val;
+	//	                $('#' + file.id).find("p.state").text("成功获取文件信息...");
+		                //获取文件信息后进入下一步
+		                deferred.resolve();
+		            });
+		            
+		            var rec = {
+						useId: app.userInfo.userId,
+						fileName: file.name,
+						fileSize: file.size,
+		                savePath: app.userInfo.userId
+		            };
+		            console.log(JSON.stringify(rec));
+		            //检查分片文件是否存在
+		            $.ajax({
+		                type : "POST",
+		                contentType: "application/json",
+		                url : baseUrl + "fileUploadRecs/startUpload",
+		                data : JSON.stringify(rec),
+		                dataType : "json",
+		                success : function(response) {
+		                    if (response.data) {
+		                    	//获取记录recordId
+		                    	file.recorId = response.data;
+		                        //分块存在，跳过
+		                        deferred.reject();
+		                    } else {
+		                        //分块不存在或不完整，重新发送该分块内容
+		                        deferred.resolve();
+		                    }
+		                }
+		            });
+		            
+		            deferred.resolve();
+		            return deferred.promise();
+		        },
+		        //时间点2：如果有分块上传，则每个分块上传之前调用此函数
+		        beforeSend : function(block) {
+		            var deferred = WebUploader.Deferred();
+		            //添加自定义的数据，在发送分块文件的时候同时发送
+		            uploader.options.formData.savePath = app.userInfo.userId;
+		            uploader.options.formData.chunkNum = block.chunk;
+		            var rec = {
+		                savePath: app.userInfo.userId,
+		                fileName : block.file.name,
+		                //文件唯一标记
+		                fileMd5 : block.file.fileMd5,
+		                //当前分块下标
+		                chunkNum : block.chunk,
+		                //当前分块大小
+		                chunkSize : block.end - block.start
+		            };
+		            console.log(JSON.stringify(rec));
+		            //检查分片文件是否存在
+		            $.ajax({
+		                type : "POST",
+		                contentType: "application/json",
+		                url : baseUrl + "files/fileExist",
+		                data : JSON.stringify(rec),
+		                dataType : "json",
+		                success : function(response) {
+		                    if (response.data) {
+		                        //分块存在，跳过
+		                        deferred.reject();
+		                    } else {
+		                        //分块不存在或不完整，重新发送该分块内容
+		                        deferred.resolve();
+		                    }
+		                }
+		            });
+		
+		            this.owner.options.formData.fileMd5 = block.file.fileMd5;
+		            deferred.resolve();
+		            return deferred.promise();
+		        },
+		        //时间点3：所有分块上传成功后调用此函数
+		        afterSendFile : function(file) {
+		            //如果分块上传成功，则通知后台合并分块
+		            var rec = {
+		                uploadId : file.recordId,
+		                userId : app.userInfo.userId,
+		                savePath: app.userInfo.userId,
+		                fileName : file.name,
+		                fileSize : file.size,
+		                uploadDate : (new Date()).Format("yyyy-MM-dd hh:mm:ss"),
+		                uploadedSliceNum : 20,
+		                uploadedSize :  file.size
+		            };
+		            console.log(JSON.stringify(rec));
+		            $.ajax({
+		                type : "POST",
+		                contentType: "application/json",
+		                url : baseUrl + "files/mergeFile",
+		                data : JSON.stringify(rec),
+		                success : function(response) {
+		                    console.log('上传成功');
+		                    
+		                    //上传完成，刷新列表
+		                	var length = app.transUpList.length;
+		                	var i = 0;
+		                	for(i = 0; i < length; i++){
+		                		if(app.transUpList.name == file.name){
+		                			app.transUpList.splice(index, 1);
+		                			break;
+		                		}
+		                	}
+		                	getUpRecodList();
+		                }
+		            });
+		        }
+		    });
+		    
+		    //上传对象创建
+		    var uploader = WebUploader.create({
+	                // swf文件路径
+	                swf : 'lib/webuploader-0.1.5/Uploader.swf',
+	                // 文件接收服务端。
+	                server : baseUrl + 'files/uploadFile',
+	                threads: 3, //上传并发数
+	                // 选择文件的按钮。可选。
+	                // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+	                pick : {
+	                    id : '#picker',//这个id是你要点击上传文件的id 
+	                    multiple : false
+	                },
+	                // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+	                resize : true,
+	                auto : true,
+	                //开启分片上传
+	                chunked : true,
+	                chunkSize : 2 * 1024 * 1024
+	            });
+			
+			uploader.on('fileQueued', function(file) {
+		    	file.percentage = 0;
+		    	file.flag = true;
+		    	
+//		    	for(var s in file){
+//		    		console.log(s + ':' + file[s]);
+//		    	}
+		    	
+		    	app.transUpList.push(file);
+	   		});
+	   		uploader.on('uploadProgress', function(file, percentage) {
+		        file.percentage = Math.round(percentage * 100);
+	    	});
+	    	uploader.on('uploadSuccess', function(file) {
+	        	mui.toast(file.name + '上传成功！');
+	    	});
+	    	uploader.on('uploadError', function(file) {
+	    		mui.toast(file.name + '上传失败!');
+	    	});
 			
 			//文件下载
 			var fileDown = function(filePath){
@@ -572,6 +793,14 @@
 		//				    dtask.filename = dtask.filename.split('/')[1];
 		//				    dtask.filename = dtask.filename.split('?')[0];
 						    dtask.flag = 0;
+						    var length = app.transDownList.length;
+						    var i = 0;
+						    for(i = 0; i < length; i++){
+						    	if(app.transDownList[i].filename == dtask.filename){
+						    		app.transDownList.splice(i, 1);
+						    		break;
+						    	}
+						    }
 						    break;
 					}
 				});
@@ -592,7 +821,7 @@
 							app.panList = [];
 							
 							mui.later(function(){
-								app.panList = data.data;
+								app.$set(app,'panList',data.data);
 							}, 30);
 				   			
 				   			app.panBasePath = path;
@@ -841,11 +1070,7 @@
 				//各按钮操作
 //				mui('#uploadBtn')[0].addEventListener('tap', function(){
 //					console.log('上传');
-//			 		mui.openWindow({
-//			 			url: 'uploader.html',
-//			 			id: 'uploader'
-//			 		});
-//				});
+//				}); 
 				//文件排序操作
 				mui('#panSortBtn')[0].addEventListener('tap', function(){
 					console.log('排序');
@@ -1113,9 +1338,31 @@
 //					app.panList.push('+');
 //				});
 				//传输列表页面
-				//文件排序操作
+				//上传文件操作
+				mui('#upStartBtn')[0].addEventListener('tap', function(){
+					console.log(app.now_transUpItem.name + ' 任务继续下载');
+    				uploader.upload(app.now_transUpItem);
+    				app.now_transUpItem.flag = true;
+//  				app.$set('transDownList', app.transDownList);
+					cancelBtn('.transup-fuc-list');
+					app.now_transUpItem = {};
+				});
+				mui('#upPauseBtn')[0].addEventListener('tap', function(){
+					console.log(app.now_transUpItem.name + ' 任务暂停');
+    				uploader.stop(app.now_transUpItem);
+    				app.now_transUpItem.flag = false;
+//  				app.$set('transDownList', app.transDownList);
+					cancelBtn('.transup-fuc-list');
+					app.now_transUpItem = {};
+				});
+				mui('#upCancelBtn')[0].addEventListener('tap', function(){
+					cancelBtn('.transup-fuc-list');
+					console.log('取消');
+					app.now_transUpItem = {};
+				});
+				//下载文件操作
 				mui('#downStartBtn')[0].addEventListener('tap', function(){
-					console.log(app.now_transDownItem.filename + ' 任务继续下载');
+					console.log(app.now_transDownItem.fileName + ' 任务继续下载');
     				app.now_transDownItem.resume();
     				app.now_transDownItem.flag = true;
 //  				app.$set('transDownList', app.transDownList);
@@ -1123,7 +1370,7 @@
 					app.now_transDownItem = {};
 				});
 				mui('#downPauseBtn')[0].addEventListener('tap', function(){
-					console.log(app.now_transDownItem.filename + ' 任务暂停');
+					console.log(app.now_transDownItem.fileName + ' 任务暂停');
     				app.now_transDownItem.pause();
     				app.now_transDownItem.flag = false;
 //  				app.$set('transDownList', app.transDownList);
@@ -1136,6 +1383,53 @@
 					app.now_transDownItem = {};
 				});
 				//回收站页面
+				mui('#trashRecoverBtn')[0].addEventListener('tap', function(){
+					console.log(app.now_trashItem.fileName + ' 任务暂停');
+    				var btnArray = ['取消', '确定'];
+					mui.confirm('确认还原', null, btnArray, function(e) {
+						if (e.index == 1) {
+							console.log('你点了取消按钮');								
+						} else {
+							util.ajax('cloud/files/moveFile', {
+									src: app.now_trashItem.savePath,
+									des: app.now_trashItem.srcPath
+								},
+						   		'post',
+							   	function(data){
+							   		if(data.code == 200){
+							   			//回收站清空成功
+							   			mui.toast(app.now_trashItem.fileName + '已还原');
+							   			getTrashList();
+							   			
+							   			cancelBtn('.trash-fuc-list');
+										app.now_trashItem = {};
+							   		} 
+							   		else{
+							   			//回收站清空失败
+							   			mui.toast(data.message);
+							   			cancelBtn('.trash-fuc-list');
+										app.now_trashItem = {};
+								   	}
+							   	},
+							   	function(){
+							   		mui.toast('系统错误，请稍后重新尝试');
+							   		cancelBtn('.trash-fuc-list');
+									app.now_trashItem = {};
+							   	},
+							   	true
+							);
+						}
+					});
+    				
+//  				app.$set('transDownList', app.transDownList);
+					cancelBtn('.trash-fuc-list');
+					app.now_trashItem = {};
+				});
+				mui('#trashCancelBtn')[0].addEventListener('tap', function(){
+					cancelBtn('.trash-fuc-list');
+					console.log('取消');
+					app.now_trashItem = {};
+				});
 				mui('#clearTrashBtn')[0].addEventListener('tap', function(){
 					console.log('清空回收站操作');
 					var btnArray = ['取消', '确定'];
