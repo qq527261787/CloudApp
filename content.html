@@ -300,10 +300,10 @@
 											<img v-show="item.category" src="img/package.png" class="comment-head-photo mui-pull-left mt7" />
 											<!--文件图标-->
 											<img v-show="!item.category" src="img/file.png" class="comment-head-photo mui-pull-left mt7" />
-											<p class="dark-medium">{{item.name}}</p>
-											<p v-show="item.size < 1000" class="gray-medium">"总大小：" + {{item.size}} + " B    当前上传：" + {{item.percentage}} + "%"</p>
-											<p v-show="item.size >= 1000 && item.size < 1000000" class="gray-medium">"总大小：" + {{(item.size / 1000).toFixed(2)}} + " KB    当前上传：" + {{item.percentage}} + "%"</p>
-											<p v-show="item.size >= 1000000" class="gray-medium">"总大小：" + {{(item.size / 1000000).toFixed(2)}} + " MB    当前上传：" + {{item.percentage}} + "%"</p>
+											<p class="dark-medium">{{item.file.name}}</p>
+											<p v-show="item.size < 1000" class="gray-medium">"总大小：" + {{item.file.size}} + " B    当前上传：" + {{item.percentage}} + "%"</p>
+											<p v-show="item.size >= 1000 && item.size < 1000000" class="gray-medium">"总大小：" + {{(item.file.size / 1000).toFixed(2)}} + " KB    当前上传：" + {{item.percentage}} + "%"</p>
+											<p v-show="item.size >= 1000000" class="gray-medium">"总大小：" + {{(item.file.size / 1000000).toFixed(2)}} + " MB    当前上传：" + {{item.percentage}} + "%"</p>
 										</li>
 									</ul>
 									<div class="transfor-text">上传记录({{transUpRecordList.length}})</div>
@@ -597,14 +597,19 @@
 		        //时间点1：所有分块进行上传之前调用此函数
 		        beforeSendFile : function(file) {
 		            var deferred = WebUploader.Deferred();
-		            
-		            file.percentage = 0;
+		            var obj = {};
+		            obj.percentage = 0;
+		            obj.file = file;
+		            obj.flag = true;
+		            if(! findFile(file.id)){
+		            	app.transUpList.push(obj);
+		            }
 		            
 		            (new WebUploader.Uploader()).md5File(file, 0, 10 * 1024 * 1024)
 	                    .progress(function(percentage) {
 //	                        $('#' + file.id).find("p.state").text("正在读取文件信息...");
 	                    }).then(function(val) {
-		                file.fileMd5 = val;
+		                obj.fileMd5 = val;
 	//	                $('#' + file.id).find("p.state").text("成功获取文件信息...");
 		                //获取文件信息后进入下一步
 		                deferred.resolve();
@@ -627,7 +632,13 @@
 		                success : function(response) {
 		                    if (response.data) {
 		                    	//获取记录recordId
-		                    	file.recorId = response.data;
+//		                    	file.recorId = response.data;
+		                    	
+		                    	var obj = findFile(file.id);
+		                    	if(obj){
+		                    		obj.recordId = response.data;
+		                    	}
+		                    	
 		                        //分块存在，跳过
 		                        deferred.reject();
 		                    } else {
@@ -646,11 +657,12 @@
 		            //添加自定义的数据，在发送分块文件的时候同时发送
 		            uploader.options.formData.savePath = app.userInfo.userId + '/uploads';
 		            uploader.options.formData.chunkNum = block.chunk;
+		            var obj = findFile(file.id);
 		            var rec = {
 		                savePath: app.userInfo.userId + '/uploads',
 		                fileName : block.file.name,
 		                //文件唯一标记
-		                fileMd5 : block.file.fileMd5,
+		                fileMd5 : obj ? obj.fileMd5 : '',
 		                //当前分块下标
 		                chunkNum : block.chunk,
 		                //当前分块大小
@@ -675,15 +687,16 @@
 		                }
 		            });
 		
-		            this.owner.options.formData.fileMd5 = block.file.fileMd5;
+		            this.owner.options.formData.fileMd5 = obj ? obj.fileMd5 : '';
 		            deferred.resolve();
 		            return deferred.promise();
 		        },
 		        //时间点3：所有分块上传成功后调用此函数
 		        afterSendFile : function(file) {
 		            //如果分块上传成功，则通知后台合并分块
+		            var obj = findFile(file.id);
 		            var rec = {
-		                uploadId : file.recordId,
+		                uploadId : obj ? obj.recordId : '',
 		                userId : app.userInfo.userId,
 		                savePath: app.userInfo.userId + '/uploads',
 		                fileName : file.name,
@@ -705,8 +718,8 @@
 		                	var length = app.transUpList.length;
 		                	var i = 0;
 		                	for(i = 0; i < length; i++){
-		                		if(app.transUpList.name == file.name){
-		                			app.transUpList.splice(index, 1);
+		                		if(app.transUpList[i].file.id == file.id){
+		                			app.transUpList.splice(i, 1);
 		                			break;
 		                		}
 		                	}
@@ -738,17 +751,22 @@
 	            });
 			
 			uploader.on('fileQueued', function(file) {
-		    	file.percentage = 0;
-		    	file.flag = true;
+//		    	file.percentage = 0;
+//		    	file.flag = true;
+//		        if(! findFile(file.id)){
+//		            app.transUpList.push(obj);
+//		        }
 		    	
 //		    	for(var s in file){
 //		    		console.log(s + ':' + file[s]);
 //		    	}
 		    	
-		    	app.transUpList.push(file);
+//		    	app.transUpList.push(file);
 	   		});
 	   		uploader.on('uploadProgress', function(file, percentage) {
-		        file.percentage = Math.round(percentage * 100);
+	   			var obj = findFile(file.id);
+	   			if(obj)
+		        	obj.percentage = Math.round(percentage * 100);
 	    	});
 	    	uploader.on('uploadSuccess', function(file) {
 	        	mui.toast(file.name + '上传成功！');
@@ -805,6 +823,22 @@
 					}
 				});
 				return dtask;
+			}
+			
+			var findFile = function(id){
+				var length = app.transUpList.length;
+				var i = 0;
+				for(i = 0; i < length; i++){
+					if(id == app.transUpList[i].file.id){
+						break;
+					}
+				}
+				if(i >= length){
+					return null;
+				}
+				else{
+					return app.transUpList[i];
+				}
 			}
 			
 			//获取文件列表
@@ -1331,16 +1365,16 @@
 				//传输列表页面
 				//上传文件操作
 				mui('#upStartBtn')[0].addEventListener('tap', function(){
-					console.log(app.now_transUpItem.name + ' 任务继续下载');
-    				uploader.upload(app.now_transUpItem.id);
+					console.log(app.now_transUpItem.file.name + ' 任务继续下载');
+    				uploader.upload(app.now_transUpItem.file);
     				app.now_transUpItem.flag = true;
 //  				app.$set('transDownList', app.transDownList);
 					cancelBtn('.transup-fuc-list');
 //					app.now_transUpItem = {};
 				});
 				mui('#upPauseBtn')[0].addEventListener('tap', function(){
-					console.log(app.now_transUpItem.name + ' 任务暂停');
-    				uploader.stop(app.now_transUpItem);
+					console.log(app.now_transUpItem.file.name + ' 任务暂停');
+    				uploader.stop(app.now_transUpItem.file);
     				app.now_transUpItem.flag = false;
 //  				app.$set('transDownList', app.transDownList);
 					cancelBtn('.transup-fuc-list');
