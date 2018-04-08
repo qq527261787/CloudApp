@@ -1336,7 +1336,7 @@
     				app.now_transUpItem.flag = true;
 //  				app.$set('transDownList', app.transDownList);
 					cancelBtn('.transup-fuc-list');
-					app.now_transUpItem = {};
+//					app.now_transUpItem = {};
 				});
 				mui('#upPauseBtn')[0].addEventListener('tap', function(){
 					console.log(app.now_transUpItem.name + ' 任务暂停');
@@ -1344,7 +1344,7 @@
     				app.now_transUpItem.flag = false;
 //  				app.$set('transDownList', app.transDownList);
 					cancelBtn('.transup-fuc-list');
-					app.now_transUpItem = {};
+//					app.now_transUpItem = {};
 				});
 				mui('#upCancelBtn')[0].addEventListener('tap', function(){
 					cancelBtn('.transup-fuc-list');
