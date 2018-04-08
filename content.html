@@ -614,7 +614,7 @@
 						useId: app.userInfo.userId,
 						fileName: file.name,
 						fileSize: file.size,
-		                savePath: app.userInfo.userId
+		                savePath: app.userInfo.userId + '/uploads'
 		            };
 		            console.log(JSON.stringify(rec));
 		            //检查分片文件是否存在
@@ -644,10 +644,10 @@
 		        beforeSend : function(block) {
 		            var deferred = WebUploader.Deferred();
 		            //添加自定义的数据，在发送分块文件的时候同时发送
-		            uploader.options.formData.savePath = app.userInfo.userId;
+		            uploader.options.formData.savePath = app.userInfo.userId + '/uploads';
 		            uploader.options.formData.chunkNum = block.chunk;
 		            var rec = {
-		                savePath: app.userInfo.userId,
+		                savePath: app.userInfo.userId + '/uploads',
 		                fileName : block.file.name,
 		                //文件唯一标记
 		                fileMd5 : block.file.fileMd5,
@@ -685,10 +685,10 @@
 		            var rec = {
 		                uploadId : file.recordId,
 		                userId : app.userInfo.userId,
-		                savePath: app.userInfo.userId,
+		                savePath: app.userInfo.userId + '/uploads',
 		                fileName : file.name,
 		                fileSize : file.size,
-		                uploadDate : (new Date()).Format("yyyy-MM-dd hh:mm:ss"),
+		                uploadDate : (new Date()).format("yyyy-MM-dd hh:mm:ss"),
 		                uploadedSliceNum : 20,
 		                uploadedSize :  file.size
 		            };
@@ -1341,7 +1341,7 @@
 				//上传文件操作
 				mui('#upStartBtn')[0].addEventListener('tap', function(){
 					console.log(app.now_transUpItem.name + ' 任务继续下载');
-    				uploader.upload(app.now_transUpItem);
+    				uploader.upload(app.now_transUpItem.id);
     				app.now_transUpItem.flag = true;
 //  				app.$set('transDownList', app.transDownList);
 					cancelBtn('.transup-fuc-list');
