@@ -541,7 +541,7 @@
 					},
 					transUpListItem: function(item){
 						this.now_transUpItem = item;
-						console.log(this.now_transUpItem.name);
+						console.log(this.now_transUpItem.file.name);
 						mui('.transup-fuc-list')[0].setAttribute('display', '');
 					},
 					transDownListItem: function(item){
@@ -657,7 +657,7 @@
 		            //添加自定义的数据，在发送分块文件的时候同时发送
 		            uploader.options.formData.savePath = app.userInfo.userId + '/uploads';
 		            uploader.options.formData.chunkNum = block.chunk;
-		            var obj = findFile(file.id);
+		            var obj = findFile(block.file.id);
 		            var rec = {
 		                savePath: app.userInfo.userId + '/uploads',
 		                fileName : block.file.name,
@@ -1366,7 +1366,8 @@
 				//上传文件操作
 				mui('#upStartBtn')[0].addEventListener('tap', function(){
 					console.log(app.now_transUpItem.file.name + ' 任务继续下载');
-    				uploader.upload(app.now_transUpItem.file);
+					uploader.upload();
+//  				uploader.upload(app.now_transUpItem.file);
     				app.now_transUpItem.flag = true;
 //  				app.$set('transDownList', app.transDownList);
 					cancelBtn('.transup-fuc-list');
@@ -1374,7 +1375,8 @@
 				});
 				mui('#upPauseBtn')[0].addEventListener('tap', function(){
 					console.log(app.now_transUpItem.file.name + ' 任务暂停');
-    				uploader.stop(app.now_transUpItem.file);
+					uploader.stop(true);
+//  				uploader.stop(app.now_transUpItem.file);
     				app.now_transUpItem.flag = false;
 //  				app.$set('transDownList', app.transDownList);
 					cancelBtn('.transup-fuc-list');
